@@ -5,10 +5,7 @@ namespace KanbanSimulation.DomainModel
 {
 	public class WorkItemQueue : IWorkItemQueue
 	{
-		private Queue<WorkItem> queue = new Queue<WorkItem>();
-
-		public WorkItemQueue()
-		{ }
+		private readonly Queue<WorkItem> queue = new Queue<WorkItem>();
 
 		public IReadOnlyList<WorkItem> Items => queue.ToList();
 

@@ -15,7 +15,7 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			Operation op = new Operation(input, output);
 
-			Action a = () => op.TakeNewWorkItems();
+			Action a = op.TakeNewWorkItems;
 
 			a.ShouldNotThrow();
 		}

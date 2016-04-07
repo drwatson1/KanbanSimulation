@@ -10,8 +10,8 @@ namespace KanbanSimulation.DomainModel
 
 		private WorkItem CurrentWorkItem; // -> Соответствует InProgress.Top, если над ним ведётся работа
 
-		private readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
-		private readonly WorkItemQueue DoneQueue = new WorkItemQueue();
+		internal readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
+		internal readonly WorkItemQueue DoneQueue = new WorkItemQueue();
 
 		public readonly int OperationComplexity;
 		public IReadOnlyList<WorkItem> InProgress => InProgressQueue.Items;
@@ -83,5 +83,10 @@ namespace KanbanSimulation.DomainModel
 		public void Push(WorkItem wi) => InProgressQueue.Push(wi);
 
 		#endregion IWorkItemQueue implementation
+
+		public override string ToString()
+		{
+			return $"InProgress: {InProgress.Count}, Done: {Done.Count}";
+		}
 	}
 }

@@ -1,9 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KanbanSimulation.Console", "KanbanSimulation.Console\KanbanSimulation.Console.csproj", "{23FE4DF5-DDDA-41CC-8EB8-BCF1C3CF7293}"
+	ProjectSection(ProjectDependencies) = postProject
+		{334FF22F-E5BE-4484-98C4-92F11B036471} = {334FF22F-E5BE-4484-98C4-92F11B036471}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KanbanSimulation.DomainModel", "KanbanSimulation.DomainModel\KanbanSimulation.DomainModel.csproj", "{334FF22F-E5BE-4484-98C4-92F11B036471}"
 EndProject
