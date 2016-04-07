@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using KanbanSimulation.Core;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkItem: Entity<int>
+	public class WorkItem : Entity<int>
 	{
 		public int LeadTime { get; private set; }
 		public int CurrentOperationProgress { get; private set; }
 
 		public WorkItem(int id)
-			:	base(id)
+			: base(id)
 		{ }
 
 		public void Tick()

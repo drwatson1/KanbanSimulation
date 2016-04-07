@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
 
-namespace KanbanSimulation.DomainModel
+namespace KanbanSimulation.Core
 {
     public abstract class Entity<TId> : IEquatable<Entity<TId>>
     {
@@ -24,14 +23,14 @@ namespace KanbanSimulation.DomainModel
 
         // For simple entities, this may suffice
         // As Evans notes earlier in the course, equality of Entities is frequently not a simple operation
-        public override bool Equals(object otherObject)
+        public override bool Equals(object obj)
         {
-            var entity = otherObject as Entity<TId>;
+            var entity = obj as Entity<TId>;
             if (entity != null)
             {
                 return this.Equals(entity);
             }
-            return base.Equals(otherObject);
+            return base.Equals(obj);
         }
 
         public override int GetHashCode()

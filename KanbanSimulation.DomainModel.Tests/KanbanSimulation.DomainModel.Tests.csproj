@@ -72,6 +72,10 @@
     <Compile Include="WorkItemTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\KanbanSimulation.Core\KanbanSimulation.Core.csproj">
+      <Project>{6375d42f-0ca6-44d0-97ad-875af2e6db48}</Project>
+      <Name>KanbanSimulation.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KanbanSimulation.DomainModel\KanbanSimulation.DomainModel.csproj">
       <Project>{334ff22f-e5be-4484-98c4-92f11b036471}</Project>
       <Name>KanbanSimulation.DomainModel</Name>
