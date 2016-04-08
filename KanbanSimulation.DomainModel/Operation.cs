@@ -20,7 +20,7 @@ namespace KanbanSimulation.DomainModel
 		public IReadOnlyList<WorkItem> Done => DoneQueue.Items;
 
 		public Operation(IWorkItemQueue pullFrom, IWorkItemQueue pushTo, int complexity = 1, int id = 0)
-			:	base(id)
+			: base(id)
 		{
 			if (pullFrom == null || pushTo == null || complexity < 1)
 				throw new ArgumentException();
@@ -32,7 +32,7 @@ namespace KanbanSimulation.DomainModel
 		}
 
 		public Operation(int complexity = 1, int id = 0)
-			:	base(id)
+			: base(id)
 		{
 			if (complexity < 1)
 				throw new ArgumentException();
@@ -46,7 +46,7 @@ namespace KanbanSimulation.DomainModel
 		// Берём в работу новый WorkItem
 		public void TakeNewWorkItems()
 		{
-			if (!InputQueue.Empty)
+			if (!object.ReferenceEquals(InProgressQueue, InputQueue) && !InputQueue.Empty)
 			{
 				InProgressQueue.Push(InputQueue.Pull());
 			}
@@ -57,6 +57,8 @@ namespace KanbanSimulation.DomainModel
 				CurrentWorkItem = InProgressQueue.Top;
 				CurrentWorkItem.StartNewOperation();
 			}
+
+			CollectEvents();
 		}
 
 		public void DoWork()
@@ -74,6 +76,8 @@ namespace KanbanSimulation.DomainModel
 				OutputQueue.Push(InProgressQueue.Pull());
 				CurrentWorkItem = null; // Закончили работу
 			}
+
+			CollectEvents();
 		}
 
 		public int WorkInProgress => InProgressQueue.Count + DoneQueue.Count;
@@ -84,13 +88,32 @@ namespace KanbanSimulation.DomainModel
 
 		public WorkItem Pull() => DoneQueue.Pull();
 
-		public void Push(WorkItem wi) => InProgressQueue.Push(wi);
+		public void Push(WorkItem wi)
+		{
+			InProgressQueue.Push(wi);
+			CollectEvents();
+		}
 
 		#endregion IWorkItemQueue implementation
 
 		public override string ToString()
 		{
 			return $"InProgress: {InProgress.Count}, Done: {Done.Count}";
+		}
+
+		private void CollectEvents()
+		{
+			foreach(var e in InProgressQueue.DomainEvents)
+			{
+				AddDomainEvent(e);
+			}
+			foreach (var e in DoneQueue.DomainEvents)
+			{
+				AddDomainEvent(e);
+			}
+
+			InProgressQueue.ClearEvents();
+			DoneQueue.ClearEvents();
 		}
 	}
 }

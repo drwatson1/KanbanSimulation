@@ -255,5 +255,50 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			op.WorkInProgress.Should().Be(2);
 		}
+
+		[TestMethod]
+		public void TakeNewWorkItemsMustRaisePushEvent()
+		{
+			Operation op = new Operation();
+
+			op.Push(new WorkItem(1));
+			op.TakeNewWorkItems();
+
+			op.DomainEvents.Should().HaveCount(1);
+		}
+
+		[TestMethod]
+		public void PushWorkItemToOperationMustRaisePushEvent()
+		{
+			Operation op = new Operation();
+			op.Push(new WorkItem(1));
+
+			op.DomainEvents.Should().HaveCount(1);
+		}
+
+		[TestMethod]
+		public void DoWorkMustNotRaiseEvents()
+		{
+			Operation op = new Operation();
+
+			op.Push(new WorkItem(1));
+			op.TakeNewWorkItems();
+			op.DoWork();
+
+			op.DomainEvents.Should().HaveCount(1);
+		}
+
+		[TestMethod]
+		public void MoveCompletedWorkItemsMustRaiseTwoEvents()
+		{
+			Operation op = new Operation();
+
+			op.Push(new WorkItem(1));
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			op.DomainEvents.Should().HaveCount(3);
+		}
 	}
 }
