@@ -3,6 +3,7 @@ using KanbanSimulation.Core.Interfaces;
 using KanbanSimulation.DomainModel.Events;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
@@ -50,7 +51,6 @@ namespace KanbanSimulation.DomainModel
 			if (!object.ReferenceEquals(InProgressQueue, InputQueue) && !InputQueue.Empty)
 			{
 				InProgressQueue.Push(InputQueue.Pull());
-				AddDomainEvent(new WorkInProgressChangedEvent(this));
 			}
 
 			// Готовимся приняться за работу над очередным WI
@@ -77,9 +77,6 @@ namespace KanbanSimulation.DomainModel
 			{
 				OutputQueue.Push(InProgressQueue.Pull());
 
-				if( !object.ReferenceEquals(OutputQueue, DoneQueue) )
-					AddDomainEvent(new WorkInProgressChangedEvent(this));
-
 				CurrentWorkItem = null; // Закончили работу
 			}
 
@@ -98,8 +95,6 @@ namespace KanbanSimulation.DomainModel
 		{
 			InProgressQueue.Push(wi);
 			CollectEvents();
-
-			AddDomainEvent(new WorkInProgressChangedEvent(this));
 		}
 
 		#endregion IWorkItemQueue implementation
@@ -111,14 +106,30 @@ namespace KanbanSimulation.DomainModel
 
 		private void CollectEvents()
 		{
-			foreach(var e in InProgressQueue.DomainEvents)
+			var newEvents = new List<IDomainEvent>();
+			newEvents.AddRange(InProgressQueue.DomainEvents);
+			newEvents.AddRange(DoneQueue.DomainEvents);
+
+			// WIP changed if push and pull events quantity does not equals
+			int pullCount = newEvents.Count(x =>
 			{
-				AddDomainEvent(e);
-			}
-			foreach (var e in DoneQueue.DomainEvents)
+				var e = x as WorkItemQueueChangedEvent;
+				if (e == null)
+					return false;
+				return e.Operation == WorkItemQueueChangedEvent.QueueOperation.Pull;
+			});
+			int pushCount = newEvents.Count(x =>
 			{
-				AddDomainEvent(e);
-			}
+				var e = x as WorkItemQueueChangedEvent;
+				if (e == null)
+					return false;
+				return e.Operation == WorkItemQueueChangedEvent.QueueOperation.Push;
+			});
+
+			newEvents.ForEach(AddDomainEvent);
+
+			if (pullCount != pushCount)
+				AddDomainEvent(new WorkInProgressChangedEvent(this));
 
 			InProgressQueue.ClearEvents();
 			DoneQueue.ClearEvents();
