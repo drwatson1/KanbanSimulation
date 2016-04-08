@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class Operation : EventSource, IWorkItemQueue
+	public class Operation : EventSource, IWorkItemQueue, IOperation
 	{
 		public IWorkItemQueue InputQueue;
 		public IWorkItemQueue OutputQueue;
@@ -18,8 +18,8 @@ namespace KanbanSimulation.DomainModel
 		private readonly WorkItemQueue DoneQueue = new WorkItemQueue();
 
 		public readonly int OperationComplexity;
-		public IReadOnlyList<WorkItem> InProgress => InProgressQueue.Items;
-		public IReadOnlyList<WorkItem> Done => DoneQueue.Items;
+		public IReadOnlyList<IWorkItem> InProgress => InProgressQueue.Items;
+		public IReadOnlyList<IWorkItem> Done => DoneQueue.Items;
 
 		public Operation(IWorkItemQueue pullFrom, IWorkItemQueue pushTo, int complexity = 1, int id = 0)
 			: base(id)

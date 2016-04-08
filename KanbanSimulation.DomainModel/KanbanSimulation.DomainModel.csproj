@@ -50,7 +50,9 @@
   <ItemGroup>
     <Compile Include="Events\WorkInProgressChangedEvent.cs" />
     <Compile Include="Events\WorkItemQueueChangedEvent.cs" />
-    <Compile Include="IWorkItemQueue.cs" />
+    <Compile Include="Interfaces\IWorkItem.cs" />
+    <Compile Include="Interfaces\IWorkItemQueue.cs" />
+    <Compile Include="IOperation.cs" />
     <Compile Include="NothingToDoException.cs" />
     <Compile Include="Operation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

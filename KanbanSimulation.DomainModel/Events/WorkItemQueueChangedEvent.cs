@@ -2,17 +2,17 @@
 
 namespace KanbanSimulation.DomainModel.Events
 {
-	public class WorkItemQueueChangedEvent : DomainEvent<WorkItemQueue>
+	public class WorkItemQueueChangedEvent : DomainEvent<IWorkItemQueue>
 	{
 		public enum QueueOperation
 		{
 			Pull, Push
 		}
 
-		public WorkItem WorkItem { get; private set; }
+		public IWorkItem WorkItem { get; private set; }
 		public QueueOperation Operation { get; private set; }
 
-		public WorkItemQueueChangedEvent(WorkItemQueue sender, WorkItem workItem, QueueOperation operation)
+		public WorkItemQueueChangedEvent(IWorkItemQueue sender, IWorkItem workItem, QueueOperation operation)
 			: base(sender)
 		{
 			WorkItem = workItem;

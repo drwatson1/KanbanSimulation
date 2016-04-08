@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace KanbanSimulation.DomainModel.Events
 {
-	public class WorkInProgressChangedEvent : DomainEvent<Operation>
+	public class WorkInProgressChangedEvent : DomainEvent<IOperation>
 	{
-		public WorkInProgressChangedEvent(Operation operation)
+		public WorkInProgressChangedEvent(IOperation operation)
 			:	base(operation)
 		{
 

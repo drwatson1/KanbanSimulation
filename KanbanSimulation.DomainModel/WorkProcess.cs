@@ -1,11 +1,12 @@
-﻿using KanbanSimulation.Core.Interfaces;
+﻿using KanbanSimulation.Core;
+using KanbanSimulation.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkProcess
+	public class WorkProcess: EventSource
 	{
 		private readonly List<Operation> operations = new List<Operation>();
 		private readonly WorkItemQueue inputQueue = new WorkItemQueue();
@@ -13,12 +14,13 @@ namespace KanbanSimulation.DomainModel
 		private Operation LastOperation;
 		private StateMachine stateMachine;
 
-		public IReadOnlyList<WorkItem> InputQueue => inputQueue.Items.ToList();
-		public IReadOnlyList<WorkItem> Done => outputQueue.Items.ToList();
+		public IReadOnlyList<IWorkItem> InputQueue => inputQueue.Items.ToList();
+		public IReadOnlyList<IWorkItem> Done => outputQueue.Items.ToList();
 
-		public IReadOnlyList<Operation> Operations => operations;
+		public IReadOnlyList<IOperation> Operations => operations;
 
-		public WorkProcess()
+		public WorkProcess(int id = 0)
+			:	base(id)
 		{
 			ConfigureStateMachine();
 		}
@@ -49,12 +51,25 @@ namespace KanbanSimulation.DomainModel
 			return this;
 		}
 
+		private void CollectEvents()
+		{
+			operations.ForEach(CollectEvents);
+		}
+
+		private void CollectEvents(Operation op)
+		{
+			op.DomainEvents.ToList().ForEach(AddDomainEvent);
+			op.ClearEvents();
+		}
+
 		public WorkProcess Tick(int count = 1)
 		{
 			for (int i = 0; i < count; ++i)
 			{
 				stateMachine.NextStep();
 			}
+
+			CollectEvents();
 
 			return this;
 		}

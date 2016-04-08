@@ -2,12 +2,12 @@
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkItem : Entity<int>
+	public class WorkItem : Entity<int>, IWorkItem
 	{
 		public int LeadTime { get; private set; }
 		public int CurrentOperationProgress { get; private set; }
 
-		public WorkItem(int id)
+		public WorkItem(int id = 0)
 			: base(id)
 		{ }
 
