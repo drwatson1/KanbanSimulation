@@ -29,7 +29,7 @@ namespace KanbanSimulation.DomainModel
 
 			if( LastOperation != null)
 			{
-				LastOperation.OutputQueue = operation.InProgressQueue;
+				LastOperation.OutputQueue = operation;
 			}
 			else
 			{

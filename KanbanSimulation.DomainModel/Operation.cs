@@ -14,8 +14,8 @@ namespace KanbanSimulation.DomainModel
 
 		private WorkItem CurrentWorkItem; // -> Соответствует InProgress.Top, если над ним ведётся работа
 
-		internal readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
-		internal readonly WorkItemQueue DoneQueue = new WorkItemQueue();
+		private readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
+		private readonly WorkItemQueue DoneQueue = new WorkItemQueue();
 
 		public readonly int OperationComplexity;
 		public IReadOnlyList<WorkItem> InProgress => InProgressQueue.Items;
