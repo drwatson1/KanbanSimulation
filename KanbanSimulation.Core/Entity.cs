@@ -13,7 +13,7 @@ namespace KanbanSimulation.Core
                 throw new ArgumentException("The ID cannot be the type's default value.", "id");
             }
 
-            this.Id = id;
+            Id = id;
         }
 
         // EF requires an empty constructor

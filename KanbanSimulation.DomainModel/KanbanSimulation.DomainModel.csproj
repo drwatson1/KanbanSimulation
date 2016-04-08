@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\WorkItemQueueChangedEvent.cs" />
     <Compile Include="IWorkItemQueue.cs" />
     <Compile Include="NothingToDoException.cs" />
     <Compile Include="Operation.cs" />

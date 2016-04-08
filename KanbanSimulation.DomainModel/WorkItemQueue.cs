@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using KanbanSimulation.Core;
+using System.Collections.Generic;
 using System.Linq;
+using System;
+using KanbanSimulation.DomainModel.Events;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkItemQueue : IWorkItemQueue
+	public class WorkItemQueue : EventSource, IWorkItemQueue
 	{
 		private readonly Queue<WorkItem> queue = new Queue<WorkItem>();
 
@@ -12,6 +15,13 @@ namespace KanbanSimulation.DomainModel
 		public void Push(WorkItem wi)
 		{
 			queue.Enqueue(wi);
+
+			Raise(wi, WorkItemQueueChangedEvent.QueueOperation.Push);
+		}
+
+		private void Raise(WorkItem wi, WorkItemQueueChangedEvent.QueueOperation operation)
+		{
+			AddDomainEvent(new WorkItemQueueChangedEvent(this, wi, operation));
 		}
 
 		public WorkItem Pull()
@@ -19,7 +29,12 @@ namespace KanbanSimulation.DomainModel
 			if (Empty)
 				throw new QueueIsEmptyException();
 
-			return queue.Dequeue();
+
+			var wi = queue.Dequeue();
+
+			Raise(wi, WorkItemQueueChangedEvent.QueueOperation.Pull);
+
+			return wi;
 		}
 
 		public WorkItem Top

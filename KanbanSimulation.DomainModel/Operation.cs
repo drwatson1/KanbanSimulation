@@ -1,9 +1,10 @@
-﻿using System;
+﻿using KanbanSimulation.Core;
+using System;
 using System.Collections.Generic;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class Operation : IWorkItemQueue
+	public class Operation : EventSource, IWorkItemQueue
 	{
 		public IWorkItemQueue InputQueue;
 		public IWorkItemQueue OutputQueue;

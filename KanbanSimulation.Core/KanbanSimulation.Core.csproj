@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventSource.cs" />
+    <Compile Include="DomainEvent.cs" />
     <Compile Include="DomainEvents.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Interfaces\IDomainEvent.cs" />
