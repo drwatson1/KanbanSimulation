@@ -1,5 +1,6 @@
 ﻿using KanbanSimulation.Core;
 using KanbanSimulation.Core.Interfaces;
+using KanbanSimulation.DomainModel.Events;
 using System;
 using System.Collections.Generic;
 
@@ -49,6 +50,7 @@ namespace KanbanSimulation.DomainModel
 			if (!object.ReferenceEquals(InProgressQueue, InputQueue) && !InputQueue.Empty)
 			{
 				InProgressQueue.Push(InputQueue.Pull());
+				AddDomainEvent(new WorkInProgressChangedEvent(this));
 			}
 
 			// Готовимся приняться за работу над очередным WI
@@ -74,6 +76,10 @@ namespace KanbanSimulation.DomainModel
 			if (CurrentWorkItem.CurrentOperationProgress >= OperationComplexity)
 			{
 				OutputQueue.Push(InProgressQueue.Pull());
+
+				if( !object.ReferenceEquals(OutputQueue, DoneQueue) )
+					AddDomainEvent(new WorkInProgressChangedEvent(this));
+
 				CurrentWorkItem = null; // Закончили работу
 			}
 
@@ -92,6 +98,8 @@ namespace KanbanSimulation.DomainModel
 		{
 			InProgressQueue.Push(wi);
 			CollectEvents();
+
+			AddDomainEvent(new WorkInProgressChangedEvent(this));
 		}
 
 		#endregion IWorkItemQueue implementation

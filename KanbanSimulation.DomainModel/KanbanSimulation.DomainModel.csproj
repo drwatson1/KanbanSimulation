@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\WorkInProgressChangedEvent.cs" />
     <Compile Include="Events\WorkItemQueueChangedEvent.cs" />
     <Compile Include="IWorkItemQueue.cs" />
     <Compile Include="NothingToDoException.cs" />

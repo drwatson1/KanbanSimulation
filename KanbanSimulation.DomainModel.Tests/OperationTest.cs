@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
+using KanbanSimulation.DomainModel.Events;
+using System.Linq;
 
 namespace KanbanSimulation.DomainModel.Tests
 {
@@ -257,23 +259,35 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
-		public void TakeNewWorkItemsMustRaisePushEvent()
+		public void TakeNewWorkItemsFromOuterQueueMustRaisePushAndWipChangedEvent()
 		{
-			Operation op = new Operation();
+			WorkItemQueue input = new WorkItemQueue();
+			WorkItemQueue output = new WorkItemQueue();
 
-			op.Push(new WorkItem(1));
+			Operation op = new Operation(input, output);
+
+			input.Push(new WorkItem(1));
+			op.ClearEvents();
+
 			op.TakeNewWorkItems();
 
-			op.DomainEvents.Should().HaveCount(1);
+			op.DomainEvents.Should().HaveCount(2);
+			op.DomainEvents.Should().Contain(x => x is WorkInProgressChangedEvent);
+			op.DomainEvents.Should().Contain(x => x is WorkItemQueueChangedEvent);
+			(op.DomainEvents.Single(x => x is WorkItemQueueChangedEvent) as WorkItemQueueChangedEvent).Operation.Should().Be(WorkItemQueueChangedEvent.QueueOperation.Push);
 		}
 
 		[TestMethod]
-		public void PushWorkItemToOperationMustRaisePushEvent()
+		public void PushWorkItemToOperationMustRaisePushAndWipChangedEvents()
 		{
 			Operation op = new Operation();
 			op.Push(new WorkItem(1));
 
-			op.DomainEvents.Should().HaveCount(1);
+			op.DomainEvents.Should().HaveCount(2);
+			op.DomainEvents.Should().Contain(x => x is WorkInProgressChangedEvent);
+			op.DomainEvents.Should().Contain(x => x is WorkItemQueueChangedEvent);
+			(op.DomainEvents.Single(x => x is WorkItemQueueChangedEvent) as WorkItemQueueChangedEvent).Operation.Should().Be(WorkItemQueueChangedEvent.QueueOperation.Push);
+
 		}
 
 		[TestMethod]
@@ -283,9 +297,22 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			op.Push(new WorkItem(1));
 			op.TakeNewWorkItems();
+			op.ClearEvents();
 			op.DoWork();
 
-			op.DomainEvents.Should().HaveCount(1);
+			op.DomainEvents.Should().HaveCount(0);
+		}
+
+		[TestMethod]
+		public void TakeNewWorkItemsMustNotRaiseEvents()
+		{
+			Operation op = new Operation();
+
+			op.Push(new WorkItem(1));
+			op.ClearEvents();
+			op.TakeNewWorkItems();
+
+			op.DomainEvents.Should().HaveCount(0);
 		}
 
 		[TestMethod]
@@ -296,9 +323,32 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.Push(new WorkItem(1));
 			op.TakeNewWorkItems();
 			op.DoWork();
+			op.ClearEvents();
 			op.MoveCompletedWorkItems();
 
-			op.DomainEvents.Should().HaveCount(3);
+			op.DomainEvents.Should().HaveCount(2);
+			op.WorkInProgress.Should().Be(1);
+		}
+
+		[TestMethod]
+		public void MoveCompletedWorkItemsToOuterQueueMustChangeWip()
+		{
+			WorkItemQueue input = new WorkItemQueue();
+			WorkItemQueue output = new WorkItemQueue();
+
+			Operation op = new Operation(input, output);
+
+			op.Push(new WorkItem(1));
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.ClearEvents();
+			op.MoveCompletedWorkItems();
+
+			op.WorkInProgress.Should().Be(0);
+			op.DomainEvents.Should().HaveCount(2);
+			op.DomainEvents.Should().Contain(x => x is WorkInProgressChangedEvent);
+			op.DomainEvents.Should().Contain(x => x is WorkItemQueueChangedEvent);
+			(op.DomainEvents.Single(x => x is WorkItemQueueChangedEvent) as WorkItemQueueChangedEvent).Operation.Should().Be(WorkItemQueueChangedEvent.QueueOperation.Pull);
 		}
 	}
 }
