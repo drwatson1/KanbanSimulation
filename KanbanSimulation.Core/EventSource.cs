@@ -12,6 +12,12 @@ namespace KanbanSimulation.Core
 		private readonly List<IDomainEvent> domainEvents = new List<IDomainEvent>();
 		public virtual IReadOnlyList<IDomainEvent> DomainEvents => domainEvents;
 
+		protected EventSource(int id)
+			:	base(id)
+		{
+
+		}
+
 		protected virtual void AddDomainEvent(IDomainEvent newEvent)
 		{
 			domainEvents.Add(newEvent);

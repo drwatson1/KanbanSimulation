@@ -1,8 +1,7 @@
 ﻿using KanbanSimulation.Core;
+using KanbanSimulation.DomainModel.Events;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using KanbanSimulation.DomainModel.Events;
 
 namespace KanbanSimulation.DomainModel
 {
@@ -11,6 +10,11 @@ namespace KanbanSimulation.DomainModel
 		private readonly Queue<WorkItem> queue = new Queue<WorkItem>();
 
 		public IReadOnlyList<WorkItem> Items => queue.ToList();
+
+		public WorkItemQueue(int id = 0)
+			: base(id)
+		{
+		}
 
 		public void Push(WorkItem wi)
 		{
@@ -28,7 +32,6 @@ namespace KanbanSimulation.DomainModel
 		{
 			if (Empty)
 				throw new QueueIsEmptyException();
-
 
 			var wi = queue.Dequeue();
 

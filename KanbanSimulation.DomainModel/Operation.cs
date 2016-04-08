@@ -1,4 +1,5 @@
 ﻿using KanbanSimulation.Core;
+using KanbanSimulation.Core.Interfaces;
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +19,8 @@ namespace KanbanSimulation.DomainModel
 		public IReadOnlyList<WorkItem> InProgress => InProgressQueue.Items;
 		public IReadOnlyList<WorkItem> Done => DoneQueue.Items;
 
-		public Operation(IWorkItemQueue pullFrom, IWorkItemQueue pushTo, int complexity = 1)
+		public Operation(IWorkItemQueue pullFrom, IWorkItemQueue pushTo, int complexity = 1, int id = 0)
+			:	base(id)
 		{
 			if (pullFrom == null || pushTo == null || complexity < 1)
 				throw new ArgumentException();
@@ -29,7 +31,8 @@ namespace KanbanSimulation.DomainModel
 			OperationComplexity = complexity;
 		}
 
-		public Operation(int complexity = 1)
+		public Operation(int complexity = 1, int id = 0)
+			:	base(id)
 		{
 			if (complexity < 1)
 				throw new ArgumentException();

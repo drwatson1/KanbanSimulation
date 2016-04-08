@@ -1,11 +1,5 @@
 ﻿using KanbanSimulation.Core.Interfaces;
 using StructureMap;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KanbanSimulation.Core
 {
@@ -20,6 +14,7 @@ namespace KanbanSimulation.Core
 						scan.Assembly("KanbanSimulation.*");
 						scan.WithDefaultConventions();
 						scan.ConnectImplementationsToTypesClosing(typeof(IHandle<>));
+						scan.ConnectImplementationsToTypesClosing(typeof(IIdGeneratorService));
 					});
 				});
 		}
