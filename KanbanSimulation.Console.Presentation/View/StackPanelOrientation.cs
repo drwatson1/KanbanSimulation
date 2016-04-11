@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KanbanSimulation.Console.ViewModel
+namespace KanbanSimulation.Console.View
 {
 	public enum StackPanelOrientation
 	{

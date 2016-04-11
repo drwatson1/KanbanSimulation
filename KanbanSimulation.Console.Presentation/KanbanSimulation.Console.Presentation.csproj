@@ -7,8 +7,8 @@
     <ProjectGuid>{6EAA0C1A-8EE5-47F0-A991-950CFBEC48FB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KanbanSimulation.Console.ViewModel</RootNamespace>
-    <AssemblyName>KanbanSimulation.Console.ViewModel</AssemblyName>
+    <RootNamespace>KanbanSimulation.Console</RootNamespace>
+    <AssemblyName>KanbanSimulation.Console.Presentation</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,12 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StackPanel.cs" />
-    <Compile Include="StackPanelOrientation.cs" />
-    <Compile Include="TextBlock.cs" />
-    <Compile Include="Position.cs" />
+    <Compile Include="Renderers\ConsoleRenderer.cs" />
+    <Compile Include="Interfaces\IDataSource.cs" />
+    <Compile Include="Interfaces\IRenderer.cs" />
+    <Compile Include="View\StackPanel.cs" />
+    <Compile Include="View\StackPanelOrientation.cs" />
+    <Compile Include="View\TextBlock.cs" />
+    <Compile Include="View\Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VisualBase.cs" />
+    <Compile Include="View\VisualBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

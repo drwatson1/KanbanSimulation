@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KanbanSimulation.Console.ViewModel
+namespace KanbanSimulation.Console.View
 {
 	public class StackPanel: VisualBase
 	{
-		private List<VisualBase> visuals = new List<VisualBase>();
+		private readonly List<VisualBase> visuals = new List<VisualBase>();
 
 		public readonly StackPanelOrientation Orientation;
 
-		public StackPanel(StackPanelOrientation orientation)
+		public StackPanel(int width, int height, StackPanelOrientation orientation)
+			:	base(width, height)
 		{
 			Orientation = orientation;
 		}
@@ -29,6 +30,11 @@ namespace KanbanSimulation.Console.ViewModel
 					Height = child.Height;
 				}
 			}
+		}
+
+		public override void Render()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

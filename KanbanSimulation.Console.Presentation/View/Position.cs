@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KanbanSimulation.Console.ViewModel
+namespace KanbanSimulation.Console.View
 {
 	public class Position
 	{
+		private int left;
+		private int top;
+
 		public readonly int Left;
 		public readonly int Top;
 
