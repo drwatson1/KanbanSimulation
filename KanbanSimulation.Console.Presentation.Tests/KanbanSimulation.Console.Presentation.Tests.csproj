@@ -66,6 +66,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KanbanSimulation.Console.Presentation\KanbanSimulation.Console.Presentation.csproj">
+      <Project>{6eaa0c1a-8ee5-47f0-a991-950cfbec48fb}</Project>
+      <Name>KanbanSimulation.Console.Presentation</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KanbanSimulation.DomainMode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KanbanSimulation.Core", "KanbanSimulation.Core\KanbanSimulation.Core.csproj", "{6375D42F-0CA6-44D0-97AD-875AF2E6DB48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KanbanSimulation.Console.Presentation", "KanbanSimulation.Console.Presentation\KanbanSimulation.Console.Presentation.csproj", "{6EAA0C1A-8EE5-47F0-A991-950CFBEC48FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KanbanSimulation.Console.Presentation.Tests", "KanbanSimulation.Console.Presentation.Tests\KanbanSimulation.Console.Presentation.Tests.csproj", "{6D70117F-21CA-4EE2-926C-C05E5CE548D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +40,14 @@ Global
 		{6375D42F-0CA6-44D0-97AD-875AF2E6DB48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6375D42F-0CA6-44D0-97AD-875AF2E6DB48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6375D42F-0CA6-44D0-97AD-875AF2E6DB48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EAA0C1A-8EE5-47F0-A991-950CFBEC48FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EAA0C1A-8EE5-47F0-A991-950CFBEC48FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EAA0C1A-8EE5-47F0-A991-950CFBEC48FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EAA0C1A-8EE5-47F0-A991-950CFBEC48FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D70117F-21CA-4EE2-926C-C05E5CE548D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D70117F-21CA-4EE2-926C-C05E5CE548D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D70117F-21CA-4EE2-926C-C05E5CE548D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D70117F-21CA-4EE2-926C-C05E5CE548D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
