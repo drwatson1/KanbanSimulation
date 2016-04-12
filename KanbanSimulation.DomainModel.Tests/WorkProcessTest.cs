@@ -146,5 +146,20 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			wp.DomainEvents.Where(e => e is WorkCompletedEvent).Should().HaveCount(2);
 		}
+
+
+		[TestMethod]
+		public void WorkInProgressChangedMustBeCorrectlyGenerated()
+		{
+			var wp = CreateWorkProcess();
+
+			wp.Push(new WorkItem(1));
+			wp.Push(new WorkItem(2));
+			wp.Push(new WorkItem(3));
+
+			wp.Tick(24);
+
+			wp.DomainEvents.Where(e => (e is WorkInProgressChangedEvent) && object.ReferenceEquals((e as WorkInProgressChangedEvent).Sender, wp)).Should().HaveCount(6);
+		}
 	}
 }

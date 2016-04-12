@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkProcess: EventSource
+	public class WorkProcess: EventSource, IOperation
 	{
 		private readonly List<Operation> operations = new List<Operation>();
 		private readonly WorkItemQueue inputQueue;
@@ -19,6 +19,19 @@ namespace KanbanSimulation.DomainModel
 		public IReadOnlyList<IWorkItem> Done => outputQueue.Items.ToList();
 
 		public IReadOnlyList<IOperation> Operations => operations;
+
+		public IReadOnlyList<IWorkItem> InProgress
+		{
+			get
+			{
+				var inProgess = new List<IWorkItem>();
+				operations.ForEach(op => inProgess.AddRange(op.InProgress));
+
+				return inProgess;
+			}
+		}
+
+		public int WorkInProgress { get; private set; }
 
 		public WorkProcess(int id = 0)
 			:   this(new WorkItemQueue(1), new WorkItemQueue(2), id)
@@ -83,11 +96,23 @@ namespace KanbanSimulation.DomainModel
 			for (int i = 0; i < count; ++i)
 			{
 				stateMachine.NextStep();
+				CalculateWorkInProgress();
 			}
 
 			CollectEvents();
 
 			return this;
+		}
+
+		private void CalculateWorkInProgress()
+		{
+			var oldWorkInProgress = WorkInProgress;
+			WorkInProgress = operations.Sum(o => o.WorkInProgress);
+
+			if(WorkInProgress != oldWorkInProgress)
+			{
+				AddDomainEvent(new WorkInProgressChangedEvent(this));
+			}
 		}
 
 		private void ConfigureStateMachine()

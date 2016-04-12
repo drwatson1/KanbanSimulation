@@ -51,7 +51,6 @@
     <Compile Include="Events\WorkCompletedEvent.cs" />
     <Compile Include="Events\WorkInProgressChangedEvent.cs" />
     <Compile Include="Events\WorkItemQueueChangedEvent.cs" />
-    <Compile Include="Events\WorkProcessWorkInProgressChangedEvent.cs" />
     <Compile Include="Interfaces\IWorkItem.cs" />
     <Compile Include="Interfaces\IWorkItemQueue.cs" />
     <Compile Include="IOperation.cs" />
