@@ -1,5 +1,6 @@
 ﻿using KanbanSimulation.Core;
 using KanbanSimulation.Core.Interfaces;
+using KanbanSimulation.DomainModel.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace KanbanSimulation.DomainModel
 	public class WorkProcess: EventSource
 	{
 		private readonly List<Operation> operations = new List<Operation>();
-		private readonly WorkItemQueue inputQueue = new WorkItemQueue();
-		private readonly WorkItemQueue outputQueue = new WorkItemQueue();
+		private readonly WorkItemQueue inputQueue;
+		private readonly WorkItemQueue outputQueue;
 		private Operation LastOperation;
 		private StateMachine stateMachine;
 
@@ -20,8 +21,15 @@ namespace KanbanSimulation.DomainModel
 		public IReadOnlyList<IOperation> Operations => operations;
 
 		public WorkProcess(int id = 0)
-			:	base(id)
+			:   this(new WorkItemQueue(1), new WorkItemQueue(2), id)
 		{
+		}
+
+		public WorkProcess(WorkItemQueue input, WorkItemQueue output, int id = 0)
+			: base(id)
+		{
+			inputQueue = input;
+			outputQueue = output;
 			ConfigureStateMachine();
 		}
 
@@ -53,7 +61,15 @@ namespace KanbanSimulation.DomainModel
 
 		private void CollectEvents()
 		{
+			// If outputQueue was pushed with work item - this work item was completed. So we must create event about this
+			var completed = outputQueue.DomainEvents.Where(e => (e is WorkItemQueueChangedEvent) && (e as WorkItemQueueChangedEvent).Operation == WorkItemQueueChangedEvent.QueueOperation.Push).Cast<WorkItemQueueChangedEvent>();
+
 			operations.ForEach(CollectEvents);
+
+			foreach (var e in completed)
+			{
+				AddDomainEvent(new WorkCompletedEvent(this, e.WorkItem));
+			}
 		}
 
 		private void CollectEvents(Operation op)

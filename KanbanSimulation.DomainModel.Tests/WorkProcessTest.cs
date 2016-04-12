@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
+using System.Linq;
+using KanbanSimulation.DomainModel.Events;
 
 namespace KanbanSimulation.DomainModel.Tests
 {
@@ -38,7 +40,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
-		public void WorkItemMustRichFirstOperationAfterFirstTick()
+		public void WorkItemMustReachFirstOperationAfterFirstTick()
 		{
 			var wp = CreateWorkProcess();
 
@@ -52,7 +54,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
-		public void WorkItemMustRichSecondOperationAfterCompletedFirst()
+		public void WorkItemMustReachSecondOperationAfterCompletedFirst()
 		{
 			var wp = CreateWorkProcess();
 
@@ -66,7 +68,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
-		public void WorkItemMustRichDone()
+		public void WorkItemMustReachDone()
 		{
 			var wp = CreateWorkProcess();
 
@@ -78,7 +80,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
-		public void AllPushedWorkItemsMustRichDone()
+		public void AllPushedWorkItemsMustReachDone()
 		{
 			var wp = CreateWorkProcess();
 
@@ -102,6 +104,47 @@ namespace KanbanSimulation.DomainModel.Tests
 			wp.Tick(12);
 
 			wi.LeadTime.Should().Be(4);
+		}
+
+		[TestMethod]
+		public void DoneWorkItemMustGenerateWorkCompletedEvent()
+		{
+			var wp = CreateWorkProcess();
+
+			var wi = new WorkItem(1);
+			wp.Push(wi);
+
+			wp.Tick(12);
+
+			wp.DomainEvents.Where(e => e is WorkCompletedEvent).Should().HaveCount(1);
+		}
+
+		[TestMethod]
+		public void SomeCompeletedWorkItemsMustGenerateCorrespondentCountOfWorkCompletedEvent()
+		{
+			var wp = CreateWorkProcess();
+
+			wp.Push(new WorkItem(1));
+			wp.Push(new WorkItem(2));
+			wp.Push(new WorkItem(3));
+
+			wp.Tick(24);
+
+			wp.DomainEvents.Where(e => e is WorkCompletedEvent).Should().HaveCount(3);
+		}
+
+		[TestMethod]
+		public void NotCompeletedWorkItemsHasNoInfluenceOnCountOfWorkCompletedEvents()
+		{
+			var wp = CreateWorkProcess();
+
+			wp.Push(new WorkItem(1));
+			wp.Push(new WorkItem(2));
+			wp.Push(new WorkItem(3));
+
+			wp.Tick(23);
+
+			wp.DomainEvents.Where(e => e is WorkCompletedEvent).Should().HaveCount(2);
 		}
 	}
 }
