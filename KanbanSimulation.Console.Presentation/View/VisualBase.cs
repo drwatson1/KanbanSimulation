@@ -57,7 +57,11 @@ namespace KanbanSimulation.Console.View
 			}
 		}
 
-		abstract public void Render();
+		abstract public void Render(IRenderer renderer);
+
+		virtual public void Arrange()
+		{
+		}
 
 		protected VisualBase(int w, int h)
 		{

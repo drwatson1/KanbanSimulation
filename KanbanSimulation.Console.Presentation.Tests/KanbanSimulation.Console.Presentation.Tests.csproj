@@ -63,9 +63,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Mocks\RendererMock.cs" />
-    <Compile Include="StackPanelTest.cs" />
+    <Compile Include="HorizontalStackPanelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextBlockTest.cs" />
+    <Compile Include="VerticalStackPanelTest.cs" />
     <Compile Include="VisualBaseTest.cs" />
   </ItemGroup>
   <ItemGroup>

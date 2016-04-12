@@ -13,10 +13,10 @@ namespace KanbanSimulation.Console.View.Tests
 			string sampleText = "abc";
 
 			var r = new RendererMock();
-			var txt = new TextBlock(5, 1, sampleText, r);
+			var txt = new TextBlock(5, 1, sampleText);
 			txt.Position = new Position(1, 2);
 
-			txt.Render();
+			txt.Render(r);
 
 			r.Text.ShouldBeEquivalentTo("abc  ");
 		}
@@ -27,10 +27,10 @@ namespace KanbanSimulation.Console.View.Tests
 			string sampleText = "abcde";
 
 			var r = new RendererMock();
-			var txt = new TextBlock(3, 1, sampleText, r);
+			var txt = new TextBlock(3, 1, sampleText);
 			txt.Position = new Position(1, 2);
 
-			txt.Render();
+			txt.Render(r);
 
 			r.Position.Left.Should().Be(1);
 			r.Position.Top.Should().Be(2);
@@ -43,10 +43,10 @@ namespace KanbanSimulation.Console.View.Tests
 			string sampleText = "abc";
 
 			var r = new RendererMock();
-			var txt = new TextBlock(5, 1, sampleText, r);
+			var txt = new TextBlock(5, 1, sampleText);
 			txt.Position = new Position(1, 2);
 
-			txt.Render();
+			txt.Render(r);
 
 			r.Position.Left.Should().Be(1);
 			r.Position.Top.Should().Be(2);

@@ -5,9 +5,8 @@ namespace KanbanSimulation.Console.View
 	public sealed class TextBlock : VisualBase
 	{
 		public readonly object DataSource;
-		public readonly IRenderer Renderer;
 
-		public TextBlock(int width, int height, object datasource, IRenderer renderer)
+		public TextBlock(int width, int height, object datasource)
 			: base(width, height)
 		{
 			if (width <= 0)
@@ -15,9 +14,9 @@ namespace KanbanSimulation.Console.View
 				throw new ArgumentException("Width must be > 0");
 			}
 
-			if (height <= 0)
+			if (height != 1)
 			{
-				throw new ArgumentException("Height must be > 0");
+				throw new ArgumentException("Height must be equals to 1");
 			}
 
 			if (datasource == null)
@@ -25,17 +24,16 @@ namespace KanbanSimulation.Console.View
 				throw new ArgumentException("DataSource can't be null");
 			}
 			DataSource = datasource;
+		}
 
-			if ( renderer == null)
+		public override void Render(IRenderer renderer)
+		{
+			if(renderer == null)
 			{
 				throw new ArgumentException("Renderer can't be null");
 			}
-			Renderer = renderer;
-		}
 
-		public override void Render()
-		{
-			Renderer.Position = Position;
+			renderer.Position = Position;
 
 			string text;
 			string datasource = DataSource.ToString();
@@ -49,7 +47,7 @@ namespace KanbanSimulation.Console.View
 				text = datasource.Remove(Width, datasource.Length - Width);
 			}
 
-			Renderer.Write(text);
+			renderer.Write(text);
 		}
 	}
 }

@@ -19,5 +19,10 @@ namespace KanbanSimulation.Console.View
 			Left = left;
 			Top = top;
 		}
+
+		public Position Adjust(int horiz, int vert)
+		{
+			return new Position(Left + horiz, Top + vert);
+		}
 	}
 }

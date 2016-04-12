@@ -22,9 +22,8 @@ namespace KanbanSimulation.Console.View.Tests
 			Height = height;
 		}
 
-		public override void Render()
+		public override void Render(IRenderer renderer)
 		{
-			throw new NotImplementedException();
 		}
 	}
 
@@ -32,7 +31,7 @@ namespace KanbanSimulation.Console.View.Tests
 	public class VisualBaseTest
 	{
 		[TestMethod]
-		public void InitialWidthMustBeZeroOrMore()
+		public void InitialWidthMustBeZeroOrGreater()
 		{
 			
 			Action a = () => new ConcreateVisualBase(-1, 0);
@@ -41,7 +40,7 @@ namespace KanbanSimulation.Console.View.Tests
 		}
 
 		[TestMethod]
-		public void InitialHeightMustBeZeroOrMore()
+		public void InitialHeightMustBeZeroOrGreater()
 		{
 			Action a = () => new ConcreateVisualBase(0, -1);
 
@@ -49,7 +48,7 @@ namespace KanbanSimulation.Console.View.Tests
 		}
 
 		[TestMethod]
-		public void WidthMustBeZeroOrMore()
+		public void WidthMustBeZeroOrGreater()
 		{
 			var v = new ConcreateVisualBase(0, 0);
 			Action a = () => v.SetWidth(-1);
@@ -59,7 +58,7 @@ namespace KanbanSimulation.Console.View.Tests
 		}
 
 		[TestMethod]
-		public void HeightMustBeZeroOrMore()
+		public void HeightMustBeZeroOrGreater()
 		{
 			var v = new ConcreateVisualBase(0, 0);
 			Action a = () => v.SetHeight(-1);
