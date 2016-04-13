@@ -40,6 +40,11 @@ namespace KanbanSimulation.DomainModel
 			return wi;
 		}
 
+		public void Clear()
+		{
+			queue.Clear();
+		}
+
 		public WorkItem Top
 		{
 			get

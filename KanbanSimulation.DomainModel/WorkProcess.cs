@@ -20,6 +20,8 @@ namespace KanbanSimulation.DomainModel
 
 		public IReadOnlyList<IOperation> Operations => operations;
 
+		public int ElapsedTicks { get; private set; }
+
 		public IReadOnlyList<IWorkItem> InProgress
 		{
 			get
@@ -93,6 +95,9 @@ namespace KanbanSimulation.DomainModel
 
 		public WorkProcess Tick(int count = 1)
 		{
+			if (count < 1)
+				throw new ArgumentException("Count must be greater zero");
+
 			for (int i = 0; i < count; ++i)
 			{
 				stateMachine.NextStep();
@@ -100,6 +105,8 @@ namespace KanbanSimulation.DomainModel
 			}
 
 			CollectEvents();
+
+			ElapsedTicks += count;
 
 			return this;
 		}
