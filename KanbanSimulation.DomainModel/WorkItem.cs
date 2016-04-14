@@ -1,8 +1,9 @@
 ﻿using KanbanSimulation.Core;
+using KanbanSimulation.DomainModel.Interfaces;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkItem : Entity<int>, IWorkItem
+	public class WorkItem : Entity, IWorkItem
 	{
 		public int LeadTime { get; private set; }
 		public int CurrentOperationProgress { get; private set; }

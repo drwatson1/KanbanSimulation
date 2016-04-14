@@ -1,13 +1,13 @@
 ﻿using KanbanSimulation.Core;
-using KanbanSimulation.Core.Interfaces;
 using KanbanSimulation.DomainModel.Events;
+using KanbanSimulation.DomainModel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkProcess: EventSource, IOperation
+	public class WorkProcess : EventSource, IOperation
 	{
 		private readonly List<Operation> operations = new List<Operation>();
 		private readonly WorkItemQueue inputQueue;
@@ -16,28 +16,32 @@ namespace KanbanSimulation.DomainModel
 		private StateMachine stateMachine;
 
 		public IReadOnlyList<IWorkItem> InputQueue => inputQueue;
-		IReadOnlyList<IWorkItem> IOperation.Done => outputQueue;
 		public ICompletedWorkItems Done => outputQueue;
-
 		public IReadOnlyList<IOperation> Operations => operations;
-
 		public int ElapsedTicks { get; private set; }
 
-		public IReadOnlyList<IWorkItem> InProgress
+		#region IOperation implementation
+
+		IReadOnlyList<IWorkItem> IOperation.InProgress
 		{
 			get
 			{
 				var inProgess = new List<IWorkItem>();
 				operations.ForEach(op => inProgess.AddRange(op.InProgress));
+				operations.ForEach(op => inProgess.AddRange(op.Done));
 
 				return inProgess;
 			}
 		}
 
+		IReadOnlyList<IWorkItem> IOperation.Done => outputQueue;
+
 		public int WorkInProgress { get; private set; }
 
+		#endregion IOperation implementation
+
 		public WorkProcess(int id = 0)
-			:   this(new WorkItemQueue(1), new WorkItemQueue(2), id)
+			: this(new WorkItemQueue(1), new WorkItemQueue(2), id)
 		{
 		}
 
@@ -53,7 +57,7 @@ namespace KanbanSimulation.DomainModel
 		{
 			operations.Add(operation);
 
-			if( LastOperation != null)
+			if (LastOperation != null)
 			{
 				LastOperation.OutputQueue = operation;
 			}
@@ -75,6 +79,26 @@ namespace KanbanSimulation.DomainModel
 			return this;
 		}
 
+		public WorkProcess Tick(int count = 1)
+		{
+			if (count < 1)
+				throw new ArgumentException("Count must be greater zero");
+
+			for (int i = 0; i < count; ++i)
+			{
+				stateMachine.NextStep();
+				CalculateWorkInProgress();
+			}
+
+			CollectEvents();
+
+			ElapsedTicks += count;
+
+			return this;
+		}
+
+		#region Private methods
+
 		private void CollectEvents()
 		{
 			// If outputQueue was pushed with work item - this work item was completed. So we must create event about this
@@ -94,30 +118,12 @@ namespace KanbanSimulation.DomainModel
 			op.ClearEvents();
 		}
 
-		public WorkProcess Tick(int count = 1)
-		{
-			if (count < 1)
-				throw new ArgumentException("Count must be greater zero");
-
-			for (int i = 0; i < count; ++i)
-			{
-				stateMachine.NextStep();
-				CalculateWorkInProgress();
-			}
-
-			CollectEvents();
-
-			ElapsedTicks += count;
-
-			return this;
-		}
-
 		private void CalculateWorkInProgress()
 		{
 			var oldWorkInProgress = WorkInProgress;
 			WorkInProgress = operations.Sum(o => o.WorkInProgress);
 
-			if(WorkInProgress != oldWorkInProgress)
+			if (WorkInProgress != oldWorkInProgress)
 			{
 				AddDomainEvent(new WorkInProgressChangedEvent(this));
 			}
@@ -132,6 +138,10 @@ namespace KanbanSimulation.DomainModel
 			stateMachine = new StateMachine(s1);
 		}
 
+		#endregion Private methods
+
+		#region Private types
+
 		private class StateMachine
 		{
 			private readonly State FirstState;
@@ -140,7 +150,7 @@ namespace KanbanSimulation.DomainModel
 
 			public StateMachine(State firstState, bool cycle = true)
 			{
-				if(firstState == null )
+				if (firstState == null)
 				{
 					throw new ArgumentException(nameof(firstState));
 				}
@@ -153,8 +163,8 @@ namespace KanbanSimulation.DomainModel
 			public void NextStep()
 			{
 				CurrentState.StateAction();
-				
-				if(CurrentState.NextState.IsNull && Cycle)
+
+				if (CurrentState.NextState.IsNull && Cycle)
 				{
 					CurrentState = FirstState;
 				}
@@ -174,10 +184,10 @@ namespace KanbanSimulation.DomainModel
 
 			static public readonly State NullObject = new State();
 
-			private State()	//	NullObject
+			private State() //	NullObject
 			{
 				NextState = this;
-				StateAction = new Action(() => { } );
+				StateAction = new Action(() => { });
 			}
 
 			public State(Action action, State next)
@@ -186,5 +196,7 @@ namespace KanbanSimulation.DomainModel
 				StateAction = action;
 			}
 		}
+
+		#endregion Private types
 	}
 }

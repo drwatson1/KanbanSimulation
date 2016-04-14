@@ -1,6 +1,7 @@
 ﻿using KanbanSimulation.Core;
 using KanbanSimulation.Core.Interfaces;
 using KanbanSimulation.DomainModel.Events;
+using KanbanSimulation.DomainModel.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace KanbanSimulation.DomainModel
 {
 	public class Operation : EventSource, IWorkItemQueue, IOperation
 	{
-		public IWorkItemQueue InputQueue;
-		public IWorkItemQueue OutputQueue;
+		public IInputQueue InputQueue;
+		public IOutputQueue OutputQueue;
 
 		private WorkItem CurrentWorkItem; // -> Соответствует InProgress.Top, если над ним ведётся работа
 
@@ -21,7 +22,7 @@ namespace KanbanSimulation.DomainModel
 		public IReadOnlyList<IWorkItem> InProgress => InProgressQueue;
 		public IReadOnlyList<IWorkItem> Done => DoneQueue;
 
-		public Operation(IWorkItemQueue pullFrom, IWorkItemQueue pushTo, int complexity = 1, int id = 0)
+		public Operation(IInputQueue pullFrom, IOutputQueue pushTo, int complexity = 1, int id = 0)
 			: base(id)
 		{
 			if (pullFrom == null || pushTo == null || complexity < 1)

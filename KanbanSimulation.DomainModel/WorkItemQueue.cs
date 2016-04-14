@@ -1,5 +1,6 @@
 ﻿using KanbanSimulation.Core;
 using KanbanSimulation.DomainModel.Events;
+using KanbanSimulation.DomainModel.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;

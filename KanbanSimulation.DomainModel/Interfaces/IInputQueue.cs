@@ -2,8 +2,10 @@
 
 namespace KanbanSimulation.DomainModel.Interfaces
 {
-	public interface IWorkItem : IEntity
+	public interface IInputQueue : IEntity
 	{
-		int LeadTime { get; }
+		bool Empty { get; }
+
+		WorkItem Pull();
 	}
 }

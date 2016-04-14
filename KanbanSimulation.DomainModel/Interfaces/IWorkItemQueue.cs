@@ -1,15 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using KanbanSimulation.Core.Interfaces;
+using System.Collections.Generic;
 
-namespace KanbanSimulation.DomainModel
+namespace KanbanSimulation.DomainModel.Interfaces
 {
-	public interface IWorkItemQueue
+	public interface IWorkItemQueue: IInputQueue, IOutputQueue
 	{
-		int Id { get; }
-		bool Empty { get; }
-
-		WorkItem Pull();
-
-		void Push(WorkItem wi);
 	}
 
 	public interface ICompletedWorkItems: IReadOnlyList<IWorkItem>

@@ -1,4 +1,5 @@
 ﻿using KanbanSimulation.Core;
+using KanbanSimulation.DomainModel.Interfaces;
 
 namespace KanbanSimulation.DomainModel.Events
 {

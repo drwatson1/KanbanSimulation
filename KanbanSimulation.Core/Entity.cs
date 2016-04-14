@@ -1,12 +1,13 @@
+using KanbanSimulation.Core.Interfaces;
 using System;
 
 namespace KanbanSimulation.Core
 {
-	public abstract class Entity<TId> : IEquatable<Entity<TId>>
+	public abstract class Entity: IEquatable<Entity>, IEntity
 	{
-		public TId Id { get; protected set; }
+		public int Id { get; protected set; }
 
-		protected Entity(TId id)
+		protected Entity(int id)
 		{
 			/*
 			if (object.Equals(id, default(TId)))
@@ -26,7 +27,7 @@ namespace KanbanSimulation.Core
 		// As Evans notes earlier in the course, equality of Entities is frequently not a simple operation
 		public override bool Equals(object obj)
 		{
-			var entity = obj as Entity<TId>;
+			var entity = obj as Entity;
 			if (entity != null)
 			{
 				return this.Equals(entity);
@@ -39,7 +40,7 @@ namespace KanbanSimulation.Core
 			return this.Id.GetHashCode();
 		}
 
-		public bool Equals(Entity<TId> other)
+		public bool Equals(Entity other)
 		{
 			if (other == null)
 			{

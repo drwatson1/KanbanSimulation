@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KanbanSimulation.Core
 {
-	public abstract class EventSource : Entity<int>
+	public abstract class EventSource : Entity
 	{
 		private readonly List<IDomainEvent> domainEvents = new List<IDomainEvent>();
 		public virtual IReadOnlyList<IDomainEvent> DomainEvents => domainEvents;
