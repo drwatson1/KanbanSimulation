@@ -147,7 +147,7 @@ namespace KanbanSimulation.DomainModel
 
 		private void ConfigureStateMachine()
 		{
-			var s3 = new State(() => { operations.ForEach(op => op.MoveCompletedWorkItems()); return true; }, State.NullObject);
+			var s3 = new State(() => { operations.ForEach(op => op.MoveCompletedWorkItems()); return true; });
 			var s2 = new State(() => { operations.ForEach(op => op.DoWork()); return true; }, s3);
 			var s1 = new State(() => { operations.ForEach(op => op.TakeNewWorkItems()); return true; }, s2);
 

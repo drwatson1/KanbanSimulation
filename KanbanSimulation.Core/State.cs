@@ -22,5 +22,10 @@ namespace KanbanSimulation.Core
 			NextState = next;
 			StateAction = action;
 		}
+
+		public State(Func<bool> action)
+			: this(action, NullObject)
+		{
+		}
 	}
 }
