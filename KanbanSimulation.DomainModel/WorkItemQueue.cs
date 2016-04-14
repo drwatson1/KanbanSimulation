@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkItemQueue : EventSource, IWorkItemQueue, IReadOnlyList<IWorkItem>, ICompletedWorkItems
+	public class WorkItemQueue : EventSource, IWorkItemQueue, IInputQueue, IOutputQueue, IReadOnlyList<IWorkItem>, ICompletedWorkItems
 	{
 		#region Own interface
 

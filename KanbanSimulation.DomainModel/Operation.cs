@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class Operation : EventSource, IWorkItemQueue, IOperation
+	public class Operation : EventSource, IInputQueue, IOutputQueue, IOperation
 	{
 		public IInputQueue InputQueue;
 		public IOutputQueue OutputQueue;
