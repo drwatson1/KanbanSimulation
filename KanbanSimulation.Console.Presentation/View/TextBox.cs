@@ -2,11 +2,11 @@
 
 namespace KanbanSimulation.Console.View
 {
-	public sealed class TextBlock : VisualBase
+	public class TextBox : VisualBase
 	{
-		public readonly object DataSource;
+		public object DataSource;
 
-		public TextBlock(int width, int height, object datasource)
+		public TextBox(int width, int height, object datasource = null)
 			: base(width, height)
 		{
 			if (width <= 0)
@@ -19,16 +19,12 @@ namespace KanbanSimulation.Console.View
 				throw new ArgumentException("Height must be equals to 1");
 			}
 
-			if (datasource == null)
-			{
-				throw new ArgumentException("DataSource can't be null");
-			}
 			DataSource = datasource;
 		}
 
 		public override void Render(IRenderer renderer)
 		{
-			if(renderer == null)
+			if (renderer == null)
 			{
 				throw new ArgumentException("Renderer can't be null");
 			}
@@ -36,11 +32,14 @@ namespace KanbanSimulation.Console.View
 			renderer.Position = Position;
 
 			string text;
-			string datasource = DataSource.ToString();
+			string datasource = DataSource?.ToString();
+			if (datasource == null)
+				datasource = "";
+
 			if (datasource.Length < Width)
 			{
 				string formatString = String.Format("{{0,-{0}}}", Width);
-				text = String.Format(formatString, DataSource);
+				text = String.Format(formatString, datasource);
 			}
 			else
 			{

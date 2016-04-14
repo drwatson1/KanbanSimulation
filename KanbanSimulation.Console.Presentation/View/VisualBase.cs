@@ -15,10 +15,9 @@ namespace KanbanSimulation.Console.View
 				return position;
 			}
 
-
 			set
 			{
-				if( value == null  )
+				if (value == null)
 				{
 					throw new ArgumentException("Position can't be null");
 				}
@@ -65,6 +64,11 @@ namespace KanbanSimulation.Console.View
 
 		protected VisualBase(int w, int h)
 		{
+			if (w < 0)
+				throw new ArgumentException("Width must be greater or equals to 0");
+			if (h < 0)
+				throw new ArgumentException("Height must be greater or equals to 0");
+
 			Width = w;
 			Height = h;
 		}

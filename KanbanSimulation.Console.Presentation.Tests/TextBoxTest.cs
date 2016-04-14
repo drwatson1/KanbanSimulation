@@ -5,7 +5,7 @@ using FluentAssertions;
 namespace KanbanSimulation.Console.View.Tests
 {
 	[TestClass]
-	public class TextBlockTest
+	public class TextBoxTest
 	{
 		[TestMethod]
 		public void RenderMustRightPadStringToTextBlockWidth()
@@ -13,7 +13,7 @@ namespace KanbanSimulation.Console.View.Tests
 			string sampleText = "abc";
 
 			var r = new RendererMock();
-			var txt = new TextBlock(5, 1, sampleText);
+			var txt = new TextBox(5, 1, sampleText);
 			txt.Position = new Position(1, 2);
 
 			txt.Render(r);
@@ -27,7 +27,7 @@ namespace KanbanSimulation.Console.View.Tests
 			string sampleText = "abcde";
 
 			var r = new RendererMock();
-			var txt = new TextBlock(3, 1, sampleText);
+			var txt = new TextBox(3, 1, sampleText);
 			txt.Position = new Position(1, 2);
 
 			txt.Render(r);
@@ -43,13 +43,24 @@ namespace KanbanSimulation.Console.View.Tests
 			string sampleText = "abc";
 
 			var r = new RendererMock();
-			var txt = new TextBlock(5, 1, sampleText);
+			var txt = new TextBox(5, 1, sampleText);
 			txt.Position = new Position(1, 2);
 
 			txt.Render(r);
 
 			r.Position.Left.Should().Be(1);
 			r.Position.Top.Should().Be(2);
+		}
+
+		[TestMethod]
+		public void MustRenderBlankStringIfDatasourceIsNull()
+		{
+			var r = new RendererMock();
+			var txt = new TextBox(5, 1);
+
+			txt.Render(r);
+
+			r.Text.Should().BeEquivalentTo("     ");
 		}
 	}
 }

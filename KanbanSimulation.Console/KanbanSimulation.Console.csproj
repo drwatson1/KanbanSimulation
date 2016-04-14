@@ -49,7 +49,20 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\KanbanSimulation.Console.Presentation\KanbanSimulation.Console.Presentation.csproj">
+      <Project>{6eaa0c1a-8ee5-47f0-a991-950cfbec48fb}</Project>
+      <Name>KanbanSimulation.Console.Presentation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KanbanSimulation.Core\KanbanSimulation.Core.csproj">
+      <Project>{6375d42f-0ca6-44d0-97ad-875af2e6db48}</Project>
+      <Name>KanbanSimulation.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KanbanSimulation.DomainModel\KanbanSimulation.DomainModel.csproj">
+      <Project>{334ff22f-e5be-4484-98c4-92f11b036471}</Project>
+      <Name>KanbanSimulation.DomainModel</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

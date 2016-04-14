@@ -17,12 +17,13 @@ namespace KanbanSimulation.Console.View
 
 			set
 			{
-				if( Position == null )
+				if( value == null )
 				{
 					throw new ArgumentException("Position can't be null");
 				}
 
-				Position = value;
+				System.Console.CursorLeft = value.Left;
+				System.Console.CursorTop = value.Top;
 			}
 		}
 

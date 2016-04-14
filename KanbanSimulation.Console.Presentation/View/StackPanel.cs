@@ -18,9 +18,11 @@ namespace KanbanSimulation.Console.View
 			Orientation = orientation;
 		}
 
-		public void AddChild(VisualBase child)
+		public StackPanel AddChild(VisualBase child)
 		{
 			Childs.Add(child);
+
+			return this;
 		}
 
 		public override void Arrange()

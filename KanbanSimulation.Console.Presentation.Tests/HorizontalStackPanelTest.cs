@@ -21,10 +21,10 @@ namespace KanbanSimulation.Console.View.Tests
 			var p = new StackPanel(StackPanelOrientation.Horizontal);
 			p.Position = new Position(10, 20);
 
-			var txt1 = new TextBlock(5, 1, "abc");
+			var txt1 = new TextBox(5, 1, "abc");
 			p.AddChild(txt1);
 
-			var txt2 = new TextBlock(3, 1, "abcde");
+			var txt2 = new TextBox(3, 1, "abcde");
 			p.AddChild(txt2);
 
 			p.Arrange();
@@ -41,13 +41,13 @@ namespace KanbanSimulation.Console.View.Tests
 		{
 			var p = new StackPanel(StackPanelOrientation.Horizontal);
 
-			var txt1 = new TextBlock(5, 1, "abc");
+			var txt1 = new TextBox(5, 1, "abc");
 			p.AddChild(txt1);
 			p.Arrange();
 
 			p.Width.Should().Be(5);
 
-			var txt2 = new TextBlock(3, 1, "abcde");
+			var txt2 = new TextBox(3, 1, "abcde");
 			p.AddChild(txt2);
 			p.Arrange();
 
@@ -59,10 +59,10 @@ namespace KanbanSimulation.Console.View.Tests
 		{
 			var p = new StackPanel(StackPanelOrientation.Horizontal);
 
-			var txt1 = new TextBlock(5, 1, "abc");
+			var txt1 = new TextBox(5, 1, "abc");
 			p.AddChild(txt1);
 
-			var txt2 = new TextBlock(3, 1, "abcde");
+			var txt2 = new TextBox(3, 1, "abcde");
 			p.AddChild(txt2);
 
 			p.Arrange();
@@ -76,10 +76,10 @@ namespace KanbanSimulation.Console.View.Tests
 			var p = new StackPanel(StackPanelOrientation.Horizontal);
 
 			var r = new RendererMock();
-			var txt1 = new TextBlock(5, 1, "abc");
+			var txt1 = new TextBox(5, 1, "abc");
 			p.AddChild(txt1);
 
-			var txt2 = new TextBlock(3, 1, "abcde");
+			var txt2 = new TextBox(3, 1, "abcde");
 			p.AddChild(txt2);
 
 			p.Arrange();
@@ -94,24 +94,24 @@ namespace KanbanSimulation.Console.View.Tests
 		{
 			var p = new StackPanel(StackPanelOrientation.Horizontal);
 
-			var txt1 = new TextBlock(5, 1, "abc");
+			var txt1 = new TextBox(5, 1, "abc");
 			p.AddChild(txt1);
 
 			var p1 = new StackPanel(StackPanelOrientation.Vertical);
 
 			p.AddChild(p1);
 
-			var txt2 = new TextBlock(3, 1, "abc");
+			var txt2 = new TextBox(3, 1, "abc");
 			p1.AddChild(txt2);
 
 			var p2 = new StackPanel(StackPanelOrientation.Horizontal);
 
 			p1.AddChild(p2);
 
-			var txt3 = new TextBlock(4, 1, "abc");
+			var txt3 = new TextBox(4, 1, "abc");
 			p2.AddChild(txt3);
 
-			var txt4 = new TextBlock(5, 1, "abc");
+			var txt4 = new TextBox(5, 1, "abc");
 			p2.AddChild(txt4);
 
 			p.Arrange();

@@ -40,15 +40,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\SimulationFormControllers\SimulationFormController.cs" />
+    <Compile Include="Forms\SimulationForm.cs" />
     <Compile Include="Renderers\ConsoleRenderer.cs" />
     <Compile Include="Interfaces\IDataSource.cs" />
     <Compile Include="Interfaces\IRenderer.cs" />
+    <Compile Include="View\Blank.cs" />
+    <Compile Include="View\Label.cs" />
     <Compile Include="View\StackPanel.cs" />
     <Compile Include="View\StackPanelOrientation.cs" />
-    <Compile Include="View\TextBlock.cs" />
+    <Compile Include="View\TextBox.cs" />
     <Compile Include="View\Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\VisualBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KanbanSimulation.Simulations\KanbanSimulation.Simulations.csproj">
+      <Project>{95E8217C-E13F-4B68-9CD2-AA52914186C3}</Project>
+      <Name>KanbanSimulation.Simulations</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

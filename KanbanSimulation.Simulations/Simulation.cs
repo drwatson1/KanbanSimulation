@@ -1,4 +1,5 @@
-﻿using KanbanSimulation.DomainModel;
+﻿using KanbanSimulation.Core;
+using KanbanSimulation.DomainModel;
 using KanbanSimulation.DomainModel.Services;
 using System.Linq;
 
@@ -8,91 +9,108 @@ namespace KanbanSimulation.Simulations
 	{
 		private readonly IdGeneratorService identity = new IdGeneratorService();
 
+		#region StateMachine and it's state variables
+
+		private int CurrentTicks;
+		private WorkItem EthalonWorkItem;
+		private StateMachine Workflow;
 		private int FirstCycleLeadTime;
 		private int FirstCycleElapsedTicks;
-		private decimal Throughput;
-		private int WorkInProgress;
-		private int FinalLeadTime;
+
+		#endregion StateMachine and it's state variables
+
+		#region Public properties
 
 		public readonly WorkProcess Process;
+		public decimal Throughput;
+		public int WorkInProgress;
+		public int LeadTime;
+
+		#endregion Public properties
 
 		public Simulation(WorkProcess process)
 		{
 			Process = process;
+
+			ConfigureStateMachine();
 		}
 
-		public void Tick()
+		public bool Tick()
 		{
-			Process.Push(new WorkItem(identity.NextId()));
-			Process.Tick();
+			return Workflow.NextStep();
 		}
 
-		private bool Step1()
+		#region Private methods
+
+		private void ConfigureStateMachine()
 		{
-			if (!Process.Done.Empty)
-				return true;
-
-			Tick();
-
-			if (Process.Done.Empty)
-				return false;
-
-			FirstCycleLeadTime = Process.Done[0].LeadTime;
-			FirstCycleElapsedTicks = Process.ElapsedTicks;
-
-			Process.Done.Clear();
-
-			return true;
-		}
-
-		private int CurrentTicks;
-
-		private bool Step2()
-		{
-			if (CurrentTicks >= FirstCycleElapsedTicks * 10)
-				return true;
-
-			Process.Tick();
-			++CurrentTicks;
-
-			if (CurrentTicks < FirstCycleElapsedTicks * 10)
-				return false;
-
-			Throughput = Process.Done.Count / 10;
-			WorkInProgress = Process.WorkInProgress;
-
-			Process.Done.Clear();
-
-			return true;
-		}
-
-		private WorkItem EthalonWorkItem;
-
-		private bool Step3()
-		{
-			if (OutputQueueContainsWorkItem(EthalonWorkItem))
-				return true;
-
-			if (EthalonWorkItem == null)
+			var s3 = new State(() =>
 			{
-				EthalonWorkItem = new WorkItem(identity.NextId());
-				Process.Push(EthalonWorkItem);
-			}
+				if (OutputQueueContainsWorkItem(EthalonWorkItem))
+					return true;
 
-			Process.Done.Clear();
-			Process.Tick();
+				if (EthalonWorkItem == null)
+				{
+					EthalonWorkItem = new WorkItem(identity.NextId());
+					Process.Push(EthalonWorkItem);
+				}
 
-			if (OutputQueueContainsWorkItem(EthalonWorkItem))
-				return false;
+				Process.Done.Clear();
+				Process.Tick();
 
-			FinalLeadTime = EthalonWorkItem.LeadTime;
+				if (OutputQueueContainsWorkItem(EthalonWorkItem))
+					return false;
 
-			return true;
+				LeadTime = EthalonWorkItem.LeadTime;
+
+				return true;
+			});
+
+			var s2 = new State(() =>
+			{
+				if (CurrentTicks >= FirstCycleElapsedTicks * 10)
+					return true;
+
+				Process.Tick();
+				++CurrentTicks;
+
+				if (CurrentTicks < FirstCycleElapsedTicks * 10)
+					return false;
+
+				Throughput = Process.Done.Count / 10;
+				WorkInProgress = Process.WorkInProgress;
+
+				Process.Done.Clear();
+
+				return true;
+			}, s3);
+
+			var s1 = new State(() =>
+			{
+				if (!Process.Done.Empty)
+					return true;
+
+				Tick();
+
+				if (Process.Done.Empty)
+					return false;
+
+				FirstCycleLeadTime = Process.Done[0].LeadTime;
+				FirstCycleElapsedTicks = Process.ElapsedTicks;
+
+				Process.Done.Clear();
+
+				return true;
+			}, s2);
+
+			Workflow = new StateMachine(s1, false);
 		}
 
 		private bool OutputQueueContainsWorkItem(WorkItem wi)
 		{
 			return Process.Done.Count(i => i.Equals(wi)) > 0;
 		}
+
+		#endregion Private methods
 	}
 }

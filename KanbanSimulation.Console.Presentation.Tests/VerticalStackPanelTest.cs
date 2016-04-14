@@ -21,10 +21,10 @@ namespace KanbanSimulation.Console.View.Tests
 			var p = new StackPanel(StackPanelOrientation.Vertical);
 			p.Position = new Position(10, 20);
 
-			var txt1 = new TextBlock(5, 1, "abc");
+			var txt1 = new TextBox(5, 1, "abc");
 			p.AddChild(txt1);
 
-			var txt2 = new TextBlock(3, 1, "abcde");
+			var txt2 = new TextBox(3, 1, "abcde");
 			p.AddChild(txt2);
 
 			p.Arrange();
@@ -41,13 +41,13 @@ namespace KanbanSimulation.Console.View.Tests
 		{
 			var p = new StackPanel(StackPanelOrientation.Vertical);
 
-			var txt1 = new TextBlock(5, 1, "abc");
+			var txt1 = new TextBox(5, 1, "abc");
 			p.AddChild(txt1);
 			p.Arrange();
 
 			p.Width.Should().Be(5);
 
-			var txt2 = new TextBlock(3, 1, "abcde");
+			var txt2 = new TextBox(3, 1, "abcde");
 			p.AddChild(txt2);
 
 			p.Arrange();
@@ -60,10 +60,10 @@ namespace KanbanSimulation.Console.View.Tests
 		{
 			var p = new StackPanel(StackPanelOrientation.Vertical);
 
-			var txt1 = new TextBlock(5, 1, "abc");
+			var txt1 = new TextBox(5, 1, "abc");
 			p.AddChild(txt1);
 
-			var txt2 = new TextBlock(3, 1, "abcde");
+			var txt2 = new TextBox(3, 1, "abcde");
 			p.AddChild(txt2);
 
 			p.Arrange();
@@ -77,10 +77,10 @@ namespace KanbanSimulation.Console.View.Tests
 			var p = new StackPanel(StackPanelOrientation.Vertical);
 
 			var r = new RendererMock();
-			var txt1 = new TextBlock(5, 1, "abc");
+			var txt1 = new TextBox(5, 1, "abc");
 			p.AddChild(txt1);
 
-			var txt2 = new TextBlock(3, 1, "abcde");
+			var txt2 = new TextBox(3, 1, "abcde");
 			p.AddChild(txt2);
 
 			p.Arrange();
