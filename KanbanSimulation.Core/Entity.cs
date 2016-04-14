@@ -17,12 +17,7 @@ namespace KanbanSimulation.Core
 
 			Id = id;
 		}
-
-		// EF requires an empty constructor
-		private Entity()
-		{
-		}
-
+		
 		// For simple entities, this may suffice
 		// As Evans notes earlier in the course, equality of Entities is frequently not a simple operation
 		public override bool Equals(object obj)

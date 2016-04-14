@@ -27,46 +27,72 @@ namespace KanbanSimulation.Simulations
 			Process.Tick();
 		}
 
-		private void Step1()
+		private bool Step1()
 		{
-			while (Process.Done.Empty)
-			{
-				Tick();
-			}
+			if (!Process.Done.Empty)
+				return true;
+
+			Tick();
+
+			if (Process.Done.Empty)
+				return false;
 
 			FirstCycleLeadTime = Process.Done[0].LeadTime;
 			FirstCycleElapsedTicks = Process.ElapsedTicks;
 
 			Process.Done.Clear();
+
+			return true;
 		}
 
-		private void Step2()
+		private int CurrentTicks;
+
+		private bool Step2()
 		{
-			Process.Tick(FirstCycleElapsedTicks * 10);
+			if (CurrentTicks >= FirstCycleElapsedTicks * 10)
+				return true;
+
+			Process.Tick();
+			++CurrentTicks;
+
+			if (CurrentTicks < FirstCycleElapsedTicks * 10)
+				return false;
 
 			Throughput = Process.Done.Count / 10;
 			WorkInProgress = Process.WorkInProgress;
 
 			Process.Done.Clear();
+
+			return true;
 		}
 
-		private void Step3()
-		{
-			var wiX = new WorkItem(identity.NextId());
-			Process.Push(wiX);
+		private WorkItem EthalonWorkItem;
 
-			while (!OutputQueueContainsWorkItem(wiX.Id))
+		private bool Step3()
+		{
+			if (OutputQueueContainsWorkItem(EthalonWorkItem))
+				return true;
+
+			if (EthalonWorkItem == null)
 			{
-				Process.Done.Clear();
-				Process.Tick();
+				EthalonWorkItem = new WorkItem(identity.NextId());
+				Process.Push(EthalonWorkItem);
 			}
 
-			FinalLeadTime = wiX.LeadTime;
+			Process.Done.Clear();
+			Process.Tick();
+
+			if (OutputQueueContainsWorkItem(EthalonWorkItem))
+				return false;
+
+			FinalLeadTime = EthalonWorkItem.LeadTime;
+
+			return true;
 		}
 
-		private bool OutputQueueContainsWorkItem(int id)
+		private bool OutputQueueContainsWorkItem(WorkItem wi)
 		{
-			return Process.Done.Count(i => i.Id == id) > 0;
+			return Process.Done.Count(i => i.Equals(wi)) > 0;
 		}
 	}
 }

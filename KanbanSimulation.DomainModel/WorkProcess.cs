@@ -9,16 +9,24 @@ namespace KanbanSimulation.DomainModel
 {
 	public class WorkProcess : EventSource, IOperation
 	{
+		#region private properties
+
 		private readonly List<Operation> operations = new List<Operation>();
 		private readonly WorkItemQueue inputQueue;
 		private readonly WorkItemQueue outputQueue;
 		private Operation LastOperation;
 		private StateMachine stateMachine;
 
+		#endregion private properties
+
+		#region Public properties
+
 		public IReadOnlyList<IWorkItem> InputQueue => inputQueue;
 		public ICompletedWorkItems Done => outputQueue;
 		public IReadOnlyList<IOperation> Operations => operations;
 		public int ElapsedTicks { get; private set; }
+
+		#endregion Public properties
 
 		#region IOperation implementation
 
@@ -40,6 +48,8 @@ namespace KanbanSimulation.DomainModel
 
 		#endregion IOperation implementation
 
+		#region ctors
+
 		public WorkProcess(int id = 0)
 			: this(new WorkItemQueue(1), new WorkItemQueue(2), id)
 		{
@@ -52,6 +62,10 @@ namespace KanbanSimulation.DomainModel
 			outputQueue = output;
 			ConfigureStateMachine();
 		}
+
+		#endregion ctors
+
+		#region Public methods
 
 		public WorkProcess AddOperation(Operation operation)
 		{
@@ -97,6 +111,8 @@ namespace KanbanSimulation.DomainModel
 			return this;
 		}
 
+		#endregion Public methods
+
 		#region Private methods
 
 		private void CollectEvents()
@@ -131,72 +147,13 @@ namespace KanbanSimulation.DomainModel
 
 		private void ConfigureStateMachine()
 		{
-			var s3 = new State(() => operations.ForEach(op => op.MoveCompletedWorkItems()), State.NullObject);
-			var s2 = new State(() => operations.ForEach(op => op.DoWork()), s3);
-			var s1 = new State(() => operations.ForEach(op => op.TakeNewWorkItems()), s2);
+			var s3 = new State(() => { operations.ForEach(op => op.MoveCompletedWorkItems()); return true; }, State.NullObject);
+			var s2 = new State(() => { operations.ForEach(op => op.DoWork()); return true; }, s3);
+			var s1 = new State(() => { operations.ForEach(op => op.TakeNewWorkItems()); return true; }, s2);
 
 			stateMachine = new StateMachine(s1);
 		}
 
 		#endregion Private methods
-
-		#region Private types
-
-		private class StateMachine
-		{
-			private readonly State FirstState;
-			private State CurrentState;
-			private readonly bool Cycle;
-
-			public StateMachine(State firstState, bool cycle = true)
-			{
-				if (firstState == null)
-				{
-					throw new ArgumentException(nameof(firstState));
-				}
-
-				FirstState = firstState;
-				CurrentState = FirstState;
-				Cycle = cycle;
-			}
-
-			public void NextStep()
-			{
-				CurrentState.StateAction();
-
-				if (CurrentState.NextState.IsNull && Cycle)
-				{
-					CurrentState = FirstState;
-				}
-				else
-				{
-					CurrentState = CurrentState.NextState;
-				}
-			}
-		}
-
-		private class State
-		{
-			public readonly State NextState;
-			public readonly Action StateAction;
-
-			public bool IsNull => NextState == this;
-
-			static public readonly State NullObject = new State();
-
-			private State() //	NullObject
-			{
-				NextState = this;
-				StateAction = new Action(() => { });
-			}
-
-			public State(Action action, State next)
-			{
-				NextState = next;
-				StateAction = action;
-			}
-		}
-
-		#endregion Private types
 	}
 }
