@@ -40,8 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NoConstraintsSimulation.cs" />
+    <Compile Include="Simulation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorkProcessFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KanbanSimulation.Core\KanbanSimulation.Core.csproj">

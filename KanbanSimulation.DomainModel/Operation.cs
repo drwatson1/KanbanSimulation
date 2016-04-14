@@ -18,8 +18,8 @@ namespace KanbanSimulation.DomainModel
 		private readonly WorkItemQueue DoneQueue = new WorkItemQueue();
 
 		public readonly int OperationComplexity;
-		public IReadOnlyList<IWorkItem> InProgress => InProgressQueue.Items;
-		public IReadOnlyList<IWorkItem> Done => DoneQueue.Items;
+		public IReadOnlyList<IWorkItem> InProgress => InProgressQueue;
+		public IReadOnlyList<IWorkItem> Done => DoneQueue;
 
 		public Operation(IWorkItemQueue pullFrom, IWorkItemQueue pushTo, int complexity = 1, int id = 0)
 			: base(id)

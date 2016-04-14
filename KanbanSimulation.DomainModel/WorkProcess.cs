@@ -15,8 +15,9 @@ namespace KanbanSimulation.DomainModel
 		private Operation LastOperation;
 		private StateMachine stateMachine;
 
-		public IReadOnlyList<IWorkItem> InputQueue => inputQueue.Items.ToList();
-		public IReadOnlyList<IWorkItem> Done => outputQueue.Items.ToList();
+		public IReadOnlyList<IWorkItem> InputQueue => inputQueue;
+		IReadOnlyList<IWorkItem> IOperation.Done => outputQueue;
+		public ICompletedWorkItems Done => outputQueue;
 
 		public IReadOnlyList<IOperation> Operations => operations;
 
