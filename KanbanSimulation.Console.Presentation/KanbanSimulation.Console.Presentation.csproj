@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -41,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\SimulationFormControllers\SimulationFormController.cs" />
+    <Compile Include="DataSources\ObjectPropertyDataSource.cs" />
+    <Compile Include="DataSources\WorkInProgressViewDataSource.cs" />
     <Compile Include="Forms\SimulationForm.cs" />
     <Compile Include="Renderers\ConsoleRenderer.cs" />
     <Compile Include="Interfaces\IDataSource.cs" />
@@ -55,6 +59,14 @@
     <Compile Include="View\VisualBase.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\KanbanSimulation.Core\KanbanSimulation.Core.csproj">
+      <Project>{6375D42F-0CA6-44D0-97AD-875AF2E6DB48}</Project>
+      <Name>KanbanSimulation.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KanbanSimulation.DomainModel\KanbanSimulation.DomainModel.csproj">
+      <Project>{334FF22F-E5BE-4484-98C4-92F11B036471}</Project>
+      <Name>KanbanSimulation.DomainModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KanbanSimulation.Simulations\KanbanSimulation.Simulations.csproj">
       <Project>{95E8217C-E13F-4B68-9CD2-AA52914186C3}</Project>
       <Name>KanbanSimulation.Simulations</Name>

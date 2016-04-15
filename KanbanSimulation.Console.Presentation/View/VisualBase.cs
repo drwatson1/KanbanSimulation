@@ -7,6 +7,7 @@ namespace KanbanSimulation.Console.View
 		private int width;
 		private int height;
 		private Position position = new Position(0, 0);
+		public string Name { get; set; }
 
 		public Position Position
 		{
@@ -62,7 +63,7 @@ namespace KanbanSimulation.Console.View
 		{
 		}
 
-		protected VisualBase(int w, int h)
+		protected VisualBase(int w, int h, string name = "")
 		{
 			if (w < 0)
 				throw new ArgumentException("Width must be greater or equals to 0");
@@ -71,6 +72,7 @@ namespace KanbanSimulation.Console.View
 
 			Width = w;
 			Height = h;
+			Name = name;
 		}
 	}
 }

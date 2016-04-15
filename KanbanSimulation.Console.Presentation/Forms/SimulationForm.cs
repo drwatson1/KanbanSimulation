@@ -66,16 +66,22 @@ namespace KanbanSimulation.Console.Forms
 			Root.Arrange();
 		}
 
-		public void AddOperation(int complexity)
+		public StackPanel AddOperation(int id, int complexity)
 		{
 			var p = new StackPanel(StackPanelOrientation.Horizontal);
-			p.AddChild(new TextBox(3, 1))               // Id
-				.AddChild(new Label($"({complexity})")) // complexity
-				.AddChild(new TextBox(4, 1))            // WIP
-				.AddChild(new TextBox(20, 1))           // WIP visualization
+			p.AddChild(new Label($"{id, -3}"))               // Id
+				.AddChild(new Label($"({complexity})  ")) // complexity
+				.AddChild(new TextBox(6, 1, null, "wip"))            // WIP
+				.AddChild(new Label("["))            
+				.AddChild(new TextBox(50, 1, null, "vis"))           // WIP visualization
+				.AddChild(new Label("]"))
 				;
 
+			Operations.AddChild(p);
+
 			Root.Arrange();
+
+			return p;
 		}
 
 		private VisualBase CompletedPanel()
@@ -83,11 +89,14 @@ namespace KanbanSimulation.Console.Forms
 			var p = new StackPanel(StackPanelOrientation.Horizontal);
 
 			CompletedWorkItemsCount = new TextBox(3, 1);
-			CompletedWorkItemsProgress = new TextBox(20, 1);
+			CompletedWorkItemsProgress = new TextBox(50, 1);
 
 			p.AddChild(new Label("Completed: "))
 				.AddChild(CompletedWorkItemsCount)
-				.AddChild(CompletedWorkItemsProgress);
+				.AddChild(new Label("["))
+				.AddChild(CompletedWorkItemsProgress)
+				.AddChild(new Label("]"))
+				;
 
 			return p;
 		}

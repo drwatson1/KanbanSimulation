@@ -8,7 +8,7 @@ namespace KanbanSimulation.Console.View
 {
 	public class StackPanel: VisualBase
 	{
-		private readonly List<VisualBase> Childs = new List<VisualBase>();
+		public readonly List<VisualBase> Childs = new List<VisualBase>();
 
 		public readonly StackPanelOrientation Orientation;
 
@@ -23,6 +23,22 @@ namespace KanbanSimulation.Console.View
 			Childs.Add(child);
 
 			return this;
+		}
+
+		public bool ContainsChild(string name)
+		{
+			return Childs.Count(x => x.Name == name) > 0;
+		}
+
+		public VisualBase GetChildByName(string name)
+		{
+			return Childs.Single(x => x.Name == name);
+		}
+
+		public bool TryGetChildByName(string name, out VisualBase child)
+		{
+			child = Childs.SingleOrDefault(x => x.Name == name);
+			return child != null;
 		}
 
 		public override void Arrange()

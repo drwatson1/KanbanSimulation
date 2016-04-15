@@ -25,10 +25,19 @@ namespace KanbanSimulation.DomainModel
 		public ICompletedWorkItems Done => outputQueue;
 		public IReadOnlyList<IOperation> Operations => operations;
 		public int ElapsedTicks { get; private set; }
+		public int CompletedWorkItems { get; private set; }
 
 		#endregion Public properties
 
 		#region IOperation implementation
+
+		public int Complexity
+		{
+			get
+			{
+				return Operations.Sum(op => op.Complexity);
+			}
+		}
 
 		IReadOnlyList<IWorkItem> IOperation.InProgress
 		{
@@ -125,6 +134,7 @@ namespace KanbanSimulation.DomainModel
 			foreach (var e in completed)
 			{
 				AddDomainEvent(new WorkCompletedEvent(this, e.WorkItem));
+				++CompletedWorkItems;
 			}
 		}
 

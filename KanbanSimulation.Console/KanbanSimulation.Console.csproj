@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -61,6 +63,10 @@
     <ProjectReference Include="..\KanbanSimulation.DomainModel\KanbanSimulation.DomainModel.csproj">
       <Project>{334ff22f-e5be-4484-98c4-92f11b036471}</Project>
       <Name>KanbanSimulation.DomainModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KanbanSimulation.Simulations\KanbanSimulation.Simulations.csproj">
+      <Project>{95E8217C-E13F-4B68-9CD2-AA52914186C3}</Project>
+      <Name>KanbanSimulation.Simulations</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

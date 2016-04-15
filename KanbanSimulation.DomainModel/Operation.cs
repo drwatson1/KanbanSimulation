@@ -18,7 +18,7 @@ namespace KanbanSimulation.DomainModel
 		private readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
 		private readonly WorkItemQueue DoneQueue = new WorkItemQueue();
 
-		public readonly int OperationComplexity;
+		public int Complexity { get; private set; }
 		public IReadOnlyList<IWorkItem> InProgress => InProgressQueue;
 		public IReadOnlyList<IWorkItem> Done => DoneQueue;
 
@@ -31,7 +31,7 @@ namespace KanbanSimulation.DomainModel
 			InputQueue = pullFrom;
 			OutputQueue = pushTo;
 
-			OperationComplexity = complexity;
+			Complexity = complexity;
 		}
 
 		public Operation(int complexity = 1, int id = 0)
@@ -43,7 +43,7 @@ namespace KanbanSimulation.DomainModel
 			InputQueue = InProgressQueue;
 			OutputQueue = DoneQueue;
 
-			OperationComplexity = complexity;
+			Complexity = complexity;
 		}
 
 		// Берём в работу новый WorkItem
@@ -74,7 +74,7 @@ namespace KanbanSimulation.DomainModel
 		{
 			if (CurrentWorkItem == null)
 				return;
-			if (CurrentWorkItem.CurrentOperationProgress >= OperationComplexity)
+			if (CurrentWorkItem.CurrentOperationProgress >= Complexity)
 			{
 				OutputQueue.Push(InProgressQueue.Pull());
 

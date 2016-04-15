@@ -37,8 +37,11 @@ namespace KanbanSimulation.Simulations
 
 		public bool Tick()
 		{
-			return Workflow.NextStep();
+			Workflow.NextStep();
+			return Workflow.IsFinished;
 		}
+
+		public bool IsFinished => Workflow.IsFinished;
 
 		#region Private methods
 
@@ -90,7 +93,8 @@ namespace KanbanSimulation.Simulations
 				if (!Process.Done.Empty)
 					return true;
 
-				Tick();
+				Process.Push(new WorkItem(identity.NextId()));
+				Process.Tick();
 
 				if (Process.Done.Empty)
 					return false;

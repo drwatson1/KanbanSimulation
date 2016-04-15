@@ -22,12 +22,15 @@ namespace KanbanSimulation.Core
 		// As Evans notes earlier in the course, equality of Entities is frequently not a simple operation
 		public override bool Equals(object obj)
 		{
+			if (obj == null)
+				return false;
+
 			var entity = obj as Entity;
 			if (entity != null)
 			{
 				return this.Equals(entity);
 			}
-			return base.Equals(obj);
+			return false;
 		}
 
 		public override int GetHashCode()

@@ -6,8 +6,8 @@ namespace KanbanSimulation.Console.View
 	{
 		public object DataSource;
 
-		public TextBox(int width, int height, object datasource = null)
-			: base(width, height)
+		public TextBox(int width, int height, object datasource = null, string name = "")
+			: base(width, height, name)
 		{
 			if (width <= 0)
 			{
@@ -21,7 +21,7 @@ namespace KanbanSimulation.Console.View
 
 			DataSource = datasource;
 		}
-
+		
 		public override void Render(IRenderer renderer)
 		{
 			if (renderer == null)
