@@ -6,6 +6,7 @@ namespace KanbanSimulation.Core
 	{
 		public readonly State NextState;
 		public readonly Func<bool> StateAction;
+		public readonly int Id;
 
 		public bool IsNull => NextState == this;
 
@@ -17,14 +18,15 @@ namespace KanbanSimulation.Core
 			StateAction = new Func<bool>(() => false);
 		}
 
-		public State(Func<bool> action, State next)
+		public State(Func<bool> action, State next, int id = 0)
 		{
 			NextState = next;
 			StateAction = action;
+			Id = id;
 		}
 
-		public State(Func<bool> action)
-			: this(action, NullObject)
+		public State(Func<bool> action, int id = 0)
+			: this(action, NullObject, id)
 		{
 		}
 	}

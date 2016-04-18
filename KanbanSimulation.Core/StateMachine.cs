@@ -8,6 +8,8 @@ namespace KanbanSimulation.Core
 		private State CurrentState;
 		private readonly bool Cycle;
 
+		public int CurrentStateId => CurrentState.Id;
+
 		public StateMachine(State firstState, bool cycle = true)
 		{
 			if (firstState == null)

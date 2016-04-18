@@ -64,7 +64,7 @@ namespace KanbanSimulation.DomainModel
 		{
 		}
 
-		public WorkProcess(WorkItemQueue input, WorkItemQueue output, int id = 0)
+		protected WorkProcess(WorkItemQueue input, WorkItemQueue output, int id = 0)
 			: base(id)
 		{
 			inputQueue = input;
@@ -136,6 +136,9 @@ namespace KanbanSimulation.DomainModel
 				AddDomainEvent(new WorkCompletedEvent(this, e.WorkItem));
 				++CompletedWorkItems;
 			}
+
+			outputQueue.ClearEvents();
+			inputQueue.ClearEvents();
 		}
 
 		private void CollectEvents(Operation op)

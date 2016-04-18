@@ -350,5 +350,39 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.DomainEvents.Should().Contain(x => x is WorkItemQueueChangedEvent);
 			(op.DomainEvents.Single(x => x is WorkItemQueueChangedEvent) as WorkItemQueueChangedEvent).Operation.Should().Be(WorkItemQueueChangedEvent.QueueOperation.Pull);
 		}
+
+		[TestMethod]
+		public void ComplexityEqualsTwoShouldRequireFourDoWorkForTwoWorkItems()
+		{
+			WorkItemQueue input = new WorkItemQueue();
+			WorkItemQueue output = new WorkItemQueue();
+
+			Operation op = new Operation(input, output, 2);
+
+			op.Push(new WorkItem(1));
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			op.Push(new WorkItem(2));
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			output.Count.Should().Be(1);
+			output[0].Id.Should().Be(1);
+
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			output.Count.Should().Be(1);
+
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			output.Count.Should().Be(2);
+		}
 	}
 }

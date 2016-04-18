@@ -130,6 +130,7 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			wp.Tick(24);
 
+			wp.CompletedWorkItems.Should().Be(3);
 			wp.DomainEvents.Where(e => e is WorkCompletedEvent).Should().HaveCount(3);
 		}
 

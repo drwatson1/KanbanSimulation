@@ -11,10 +11,10 @@ namespace KanbanSimulation.Simulations
 
 		#region StateMachine and it's state variables
 
-		private int CurrentTicks;
+		private int CurrentTicks => Process.ElapsedTicks - FirstCycleElapsedTicks;
 		private WorkItem EthalonWorkItem;
 		private StateMachine Workflow;
-		private int FirstCycleLeadTime;
+		public int FirstCycleLeadTime { get; private set; }
 		private int FirstCycleElapsedTicks;
 
 		#endregion StateMachine and it's state variables
@@ -25,6 +25,7 @@ namespace KanbanSimulation.Simulations
 		public decimal Throughput;
 		public int WorkInProgress;
 		public int LeadTime;
+		public int CurrentState => Workflow.CurrentStateId;
 
 		#endregion Public properties
 
@@ -37,6 +38,7 @@ namespace KanbanSimulation.Simulations
 
 		public bool Tick()
 		{
+			Process.ClearEvents();
 			Workflow.NextStep();
 			return Workflow.IsFinished;
 		}
@@ -49,7 +51,7 @@ namespace KanbanSimulation.Simulations
 		{
 			var s3 = new State(() =>
 			{
-				if (OutputQueueContainsWorkItem(EthalonWorkItem))
+				if (EthalonWorkItem != null && OutputQueueContainsWorkItem(EthalonWorkItem))
 					return true;
 
 				if (EthalonWorkItem == null)
@@ -59,42 +61,46 @@ namespace KanbanSimulation.Simulations
 				}
 
 				Process.Done.Clear();
-				Process.Tick();
+				Process.Tick(3);
 
-				if (OutputQueueContainsWorkItem(EthalonWorkItem))
+				if (!OutputQueueContainsWorkItem(EthalonWorkItem))
 					return false;
 
 				LeadTime = EthalonWorkItem.LeadTime;
 
 				return true;
-			});
+			}, 3);
 
 			var s2 = new State(() =>
 			{
 				if (CurrentTicks >= FirstCycleElapsedTicks * 10)
 					return true;
 
-				Process.Tick();
-				++CurrentTicks;
+				if (Process.InputQueue.Count == 0)
+					Process.Push(new WorkItem(identity.NextId()));
+
+				Process.Tick(3);
 
 				if (CurrentTicks < FirstCycleElapsedTicks * 10)
 					return false;
 
-				Throughput = Process.Done.Count / 10;
+				Throughput = Process.Done.Count / ((decimal)CurrentTicks / FirstCycleElapsedTicks);
 				WorkInProgress = Process.WorkInProgress;
 
 				Process.Done.Clear();
 
 				return true;
-			}, s3);
+			}, s3, 2);
 
 			var s1 = new State(() =>
 			{
 				if (!Process.Done.Empty)
 					return true;
 
-				Process.Push(new WorkItem(identity.NextId()));
-				Process.Tick();
+				if (Process.InputQueue.Count == 0)
+					Process.Push(new WorkItem(identity.NextId()));
+
+				Process.Tick(3);
 
 				if (Process.Done.Empty)
 					return false;
@@ -105,13 +111,26 @@ namespace KanbanSimulation.Simulations
 				Process.Done.Clear();
 
 				return true;
-			}, s2);
+			}, s2, 1);
 
-			Workflow = new StateMachine(s1, false);
+			var s0 = new State(() =>
+			{
+				if (Process.InputQueue.Count == 0)
+					Process.Push(new WorkItem(identity.NextId()));
+
+				Process.Tick();
+
+				return true;
+			}, s1, 0);
+
+			Workflow = new StateMachine(s0, false);
 		}
 
 		private bool OutputQueueContainsWorkItem(WorkItem wi)
 		{
+			if (wi == null)
+				return false;
+
 			return Process.Done.Count(i => i.Equals(wi)) > 0;
 		}
 

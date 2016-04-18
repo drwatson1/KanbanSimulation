@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace KanbanSimulation.Console
@@ -33,12 +34,15 @@ namespace KanbanSimulation.Console
 
 				while(!sim.Tick())
 				{
-					sim.Tick();
-
 					form.Render(r);
-					System.Console.ReadLine();
+					Thread.Sleep(100);
+					//System.Console.ReadLine();
 				}
 
+				form.Render(r);
+
+				System.Console.WriteLine();
+				System.Console.WriteLine();
 				System.Console.WriteLine("Simulation completed");
 				System.Console.ReadLine();
 			}
