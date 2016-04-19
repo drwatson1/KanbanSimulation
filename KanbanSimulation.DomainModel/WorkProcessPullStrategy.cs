@@ -3,7 +3,7 @@ using System;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkProcessPushStrategy : IWorkProcessStrategy
+	public class WorkProcessPullStrategy : IWorkProcessStrategy
 	{
 		public void Push(WorkItem wi, IOutputQueue doneQueue, IOutputQueue outputQueue)
 		{
@@ -14,7 +14,7 @@ namespace KanbanSimulation.DomainModel
 			if (doneQueue == null)
 				throw new ArgumentNullException(nameof(doneQueue));
 
-			outputQueue.Push(wi);
+			doneQueue.Push(wi);
 		}
 
 		public void Pull(IInputQueue inputQueue, IOutputQueue inProgressQueue)
