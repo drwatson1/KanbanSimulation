@@ -59,6 +59,7 @@
     <Compile Include="Interfaces\IWorkItem.cs" />
     <Compile Include="Interfaces\IWorkItemQueue.cs" />
     <Compile Include="Interfaces\IOperation.cs" />
+    <Compile Include="Interfaces\IWorkProcessStrategy.cs" />
     <Compile Include="NothingToDoException.cs" />
     <Compile Include="Operation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="QueueIsEmptyException.cs" />
     <Compile Include="WorkItem.cs" />
     <Compile Include="WorkProcess.cs" />
+    <Compile Include="WorkProcessPushStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KanbanSimulation.Core\KanbanSimulation.Core.csproj">

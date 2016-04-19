@@ -10,6 +10,10 @@ namespace KanbanSimulation.DomainModel
 {
 	public class Operation : EventSource, IInputQueue, IOutputQueue, IOperation
 	{
+		private static IWorkProcessStrategy DefaultStrategy = new WorkProcessPushStrategy();
+
+		private IWorkProcessStrategy Strategy;
+
 		public IInputQueue InputQueue;
 		public IOutputQueue OutputQueue;
 
@@ -22,21 +26,36 @@ namespace KanbanSimulation.DomainModel
 		public IReadOnlyList<IWorkItem> InProgress => InProgressQueue;
 		public IReadOnlyList<IWorkItem> Done => DoneQueue;
 
-		public Operation(IInputQueue pullFrom, IOutputQueue pushTo, int complexity = 1, int id = 0)
+		public Operation(IWorkProcessStrategy strategy, IInputQueue pullFrom, IOutputQueue pushTo, int complexity = 1, int id = 0)
 			: base(id)
 		{
-			if (pullFrom == null || pushTo == null || complexity < 1)
-				throw new ArgumentException();
+			if (pushTo == null)
+				throw new ArgumentNullException(nameof(pushTo));
+			if (pullFrom == null)
+				throw new ArgumentNullException(nameof(pullFrom));
+			if (strategy == null)
+				throw new ArgumentNullException(nameof(strategy));
+			if (complexity < 1)
+				throw new ArgumentException(nameof(complexity));
 
 			InputQueue = pullFrom;
 			OutputQueue = pushTo;
 
 			Complexity = complexity;
+			Strategy = strategy;
 		}
 
-		public Operation(int complexity = 1, int id = 0)
+		public Operation(IInputQueue pullFrom, IOutputQueue pushTo, int complexity = 1, int id = 0)
+			: this(DefaultStrategy, pullFrom, pushTo, complexity, id)
+		{
+		}
+
+		public Operation(IWorkProcessStrategy strategy, int complexity = 1, int id = 0)
 			: base(id)
 		{
+			if (strategy == null)
+				throw new ArgumentNullException(nameof(strategy));
+
 			if (complexity < 1)
 				throw new ArgumentException();
 
@@ -44,15 +63,18 @@ namespace KanbanSimulation.DomainModel
 			OutputQueue = DoneQueue;
 
 			Complexity = complexity;
+			Strategy = strategy;
+		}
+
+		public Operation(int complexity = 1, int id = 0)
+			: this(DefaultStrategy, complexity, id)
+		{
 		}
 
 		// Берём в работу новый WorkItem
 		public void TakeNewWorkItems()
 		{
-			if (!object.ReferenceEquals(InProgressQueue, InputQueue) && !InputQueue.Empty)
-			{
-				InProgressQueue.Push(InputQueue.Pull());
-			}
+			Strategy.Pull(InputQueue, InProgressQueue);
 
 			// Готовимся приняться за работу над очередным WI
 			if (CurrentWorkItem == null && !InProgressQueue.Empty)
@@ -74,9 +96,10 @@ namespace KanbanSimulation.DomainModel
 		{
 			if (CurrentWorkItem == null)
 				return;
+
 			if (CurrentWorkItem.CurrentOperationProgress >= Complexity)
 			{
-				OutputQueue.Push(InProgressQueue.Pull());
+				Strategy.Push(InProgressQueue.Pull(), DoneQueue, OutputQueue);
 
 				CurrentWorkItem = null; // Закончили работу
 			}

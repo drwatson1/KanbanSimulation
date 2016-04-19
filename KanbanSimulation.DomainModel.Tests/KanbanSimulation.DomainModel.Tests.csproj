@@ -67,6 +67,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="OperationTest.cs" />
+    <Compile Include="WorkProcessPushStrategyTest.cs" />
     <Compile Include="WorkProcessTest.cs" />
     <Compile Include="WorkItemQueueTest.cs" />
     <Compile Include="WorkItemTest.cs" />

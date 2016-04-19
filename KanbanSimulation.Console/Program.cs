@@ -2,22 +2,17 @@
 using KanbanSimulation.Console.Forms;
 using KanbanSimulation.Console.View;
 using KanbanSimulation.Simulations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace KanbanSimulation.Console
 {
-	class Program
+	internal class Program
 	{
-		static void Main()
+		private static void Main()
 		{
 			try
 			{
-				var workProcess = WorkProcessFactory.CreateNoConstraintsWorkProcess(1);
+				var workProcess = WorkProcessFactory.CreateNoConstraintsWorkProcess(5);
 				var sim = new Simulation(workProcess);
 
 				var form = new SimulationForm(workProcess.Name);
@@ -32,11 +27,11 @@ namespace KanbanSimulation.Console
 
 				form.Render(r);
 
-				while(!sim.Tick())
+				while (!sim.Tick())
 				{
 					controller.Tick();
 					form.Render(r);
-					Thread.Sleep(500);
+					Thread.Sleep(100);
 					//System.Console.ReadLine();
 				}
 
