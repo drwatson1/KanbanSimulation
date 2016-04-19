@@ -34,8 +34,9 @@ namespace KanbanSimulation.Console
 
 				while(!sim.Tick())
 				{
+					controller.Tick();
 					form.Render(r);
-					Thread.Sleep(100);
+					Thread.Sleep(500);
 					//System.Console.ReadLine();
 				}
 

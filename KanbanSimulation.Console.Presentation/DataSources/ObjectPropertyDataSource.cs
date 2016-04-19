@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KanbanSimulation.Console.DataSources
 {
-	public class ObjectPropertyDataSource<TValueType>
+	class ObjectPropertyDataSource<TValueType>
 	{
 		private readonly Func<TValueType> GetValue;
 
@@ -21,7 +21,7 @@ namespace KanbanSimulation.Console.DataSources
 		}
 	}
 
-	public static class DataSourceFactory
+	static class DataSourceFactory
 	{
 		public static ObjectPropertyDataSource<T> ObjectPropertyDataSource<T>(Func<T> getValue)
 		{

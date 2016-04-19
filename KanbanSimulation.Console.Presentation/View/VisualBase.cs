@@ -8,6 +8,7 @@ namespace KanbanSimulation.Console.View
 		private int height;
 		private Position position = new Position(0, 0);
 		public string Name { get; set; }
+		public bool Visible { get; set; }
 
 		public Position Position
 		{
@@ -31,6 +32,9 @@ namespace KanbanSimulation.Console.View
 		{
 			get
 			{
+				if (!Visible)
+					return 0;
+
 				return width;
 			}
 			protected set
@@ -46,6 +50,9 @@ namespace KanbanSimulation.Console.View
 		{
 			get
 			{
+				if (!Visible)
+					return 0;
+
 				return height;
 			}
 			protected set
@@ -73,6 +80,7 @@ namespace KanbanSimulation.Console.View
 			Width = w;
 			Height = h;
 			Name = name;
+			Visible = true;
 		}
 	}
 }

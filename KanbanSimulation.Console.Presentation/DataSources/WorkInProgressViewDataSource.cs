@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KanbanSimulation.Console.DataSources
 {
-	public class WorkInProgressViewDataSource
+	class WorkInProgressViewDataSource
 	{
 		private readonly Func<int> GetWip;
 

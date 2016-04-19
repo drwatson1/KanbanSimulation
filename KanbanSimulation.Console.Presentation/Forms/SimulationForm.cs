@@ -7,15 +7,34 @@ namespace KanbanSimulation.Console.Forms
 	{
 		private StackPanel Root;
 
+		public TextBox MeasurementInterval;
+
 		public TextBox CurrentWorkInProgress;
+		public TextBox ElapsedTicks;
+		public TextBox LastLeadTime;
+
+		public TextBox CurrentStep;
+		public TextBox CurrentStatus;
+
 		public StackPanel Operations;
 
 		public TextBox CompletedWorkItemsCount;
 		public TextBox CompletedWorkItemsProgress;
 
-		public TextBox LeadTime;
-		public TextBox WorkInProgress;
-		public TextBox Throughput;
+		public StackPanel Step1StackPanel = new StackPanel(StackPanelOrientation.Vertical);
+			public TextBox Step1LeadTime;
+
+		public StackPanel Step2StackPanel = new StackPanel(StackPanelOrientation.Vertical);
+			public TextBox Step2WorkInProgress;
+			public TextBox Step2Throughput;
+
+		public StackPanel Step3StackPanel = new StackPanel(StackPanelOrientation.Vertical);
+			public TextBox Step3LeadTime;
+
+		public void Arrange()
+		{
+			Root.Arrange();
+		}
 
 		public Position Position
 		{
@@ -52,16 +71,39 @@ namespace KanbanSimulation.Console.Forms
 
 			Root.AddChild(new Label(caption))
 				.AddChild(new Blank())
-				.AddChild(LabelWithValue("Current WIP: ", ref CurrentWorkInProgress, 3))
+				.AddChild(LabelWithValue("Measurement Interval: ", ref MeasurementInterval, 2))
 				.AddChild(new Blank())
 				.AddChild(Operations)
 				.AddChild(new Blank())
 				.AddChild(CompletedPanel())
 				.AddChild(new Blank())
-				.AddChild(LabelWithValue("Lead time:  ", ref LeadTime, 5))
-				.AddChild(LabelWithValue("WIP:        ", ref WorkInProgress, 5))
-				.AddChild(LabelWithValue("Throughput: ", ref Throughput, 5))
+				.AddChild(LabelWithValue("Current WIP:    ", ref CurrentWorkInProgress, 3))
+				.AddChild(LabelWithValue("Last lead time: ", ref LastLeadTime, 3))
+				.AddChild(LabelWithValue("Elapsed ticks:  ", ref ElapsedTicks, 4))
+				.AddChild(new Blank())
+				.AddChild(LabelWithValue("Current step:   ", ref CurrentStep, 1))
+				.AddChild(LabelWithValue("Status:         ", ref CurrentStatus, 9))
+				.AddChild(new Blank())
+				.AddChild(Step1StackPanel)
+				.AddChild(new Blank())
+				.AddChild(Step2StackPanel)
+				.AddChild(new Blank())
+				.AddChild(Step3StackPanel)
+				.AddChild(new Blank())
 				;
+
+			Step1StackPanel.Visible = false;
+				Step1StackPanel.AddChild(new Label("Step 1:"));
+				Step1StackPanel.AddChild(LabelWithValue("  Lead time:  ", ref Step1LeadTime, 5));
+
+			Step2StackPanel.Visible = false;
+				Step2StackPanel.AddChild(new Label("Step 2:"));
+				Step2StackPanel.AddChild(LabelWithValue("  WIP:        ", ref Step2WorkInProgress, 5));
+				Step2StackPanel.AddChild(LabelWithValue("  Throughput: ", ref Step2Throughput, 5));
+
+			Step3StackPanel.Visible = false;
+				Step3StackPanel.AddChild(new Label("Step 3:"));
+				Step3StackPanel.AddChild(LabelWithValue("  Lead time:  ", ref Step3LeadTime, 5));
 
 			Root.Arrange();
 		}

@@ -29,14 +29,43 @@ namespace KanbanSimulation.Console.Controllers
 			BindAll();
 		}
 
+		public void Tick()
+		{
+			switch (Sim.CurrentWorkFlowState)
+			{
+				case 1:
+					Form.Step1StackPanel.Visible = true;
+					Form.Arrange();
+					break;
+				case 2:
+					Form.Step2StackPanel.Visible = true;
+					Form.Arrange();
+					break;
+				case 3:
+					Form.Step3StackPanel.Visible = true;
+					Form.Arrange();
+					break;
+			}
+		}
+
 		private void BindAll()
 		{
-			Form.CurrentWorkInProgress.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.Process.WorkInProgress);
-			Form.CompletedWorkItemsCount.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.Process.CompletedWorkItems);
+			Form.MeasurementInterval.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasurementInterval);
+
+			Form.CompletedWorkItemsCount.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.CompletedWorkItems);
+			Form.CurrentWorkInProgress.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.WorkInProgress);
+			Form.ElapsedTicks.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.ElapsedTicks);
+			Form.CurrentStatus.DataSource = new SimulationStatusDataSource(() => Sim.IsFinished);
+			Form.CurrentStep.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.CurrentWorkFlowState);
+
 			Form.CompletedWorkItemsProgress.DataSource = new WorkInProgressViewDataSource(() => Sim.Process.CompletedWorkItems);
-			Form.LeadTime.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasuredLeadTime);
-			Form.WorkInProgress.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasuredWorkInProgress);
-			Form.Throughput.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasuredThroughput);
+
+			Form.Step1LeadTime.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.FirstCycleLeadTime);
+
+			Form.Step2WorkInProgress.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasuredWorkInProgress);
+			Form.Step2Throughput.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasuredThroughput);
+
+			Form.Step3LeadTime.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasuredLeadTime);
 
 			BindOperations();
 		}

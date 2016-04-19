@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KanbanSimulation.Console.View
 {
-	public class StackPanel: VisualBase
+	public class StackPanel : VisualBase
 	{
 		public readonly List<VisualBase> Childs = new List<VisualBase>();
 
 		public readonly StackPanelOrientation Orientation;
 
 		public StackPanel(StackPanelOrientation orientation)
-			:	base(0, 0)
+			: base(0, 0)
 		{
 			Orientation = orientation;
 		}
@@ -82,7 +79,7 @@ namespace KanbanSimulation.Console.View
 
 			Position currentPosition = Position;
 
-			foreach(var c in Childs)
+			foreach (var c in Childs)
 			{
 				c.Position = currentPosition;
 				c.Arrange();
@@ -92,14 +89,18 @@ namespace KanbanSimulation.Console.View
 				{
 					Height = c.Height;
 				}
-				
+
 				currentPosition = currentPosition.Adjust(c.Width, 0);
 			}
 		}
 
 		public override void Render(IRenderer renderer)
 		{
-			Childs.ForEach(x => x.Render(renderer));
+			Childs.ForEach(x =>
+			{
+				if (x.Visible)
+					x.Render(renderer);
+			});
 		}
 	}
 }

@@ -4,29 +4,6 @@ using FluentAssertions;
 
 namespace KanbanSimulation.Console.View.Tests
 {
-	class ConcreateVisualBase:	VisualBase
-	{
-		public ConcreateVisualBase(int width, int height)
-			:	base(width, height)
-		{
-
-		}
-
-		public void SetWidth(int width)
-		{
-			Width = width;
-		}
-
-		public void SetHeight(int height)
-		{
-			Height = height;
-		}
-
-		public override void Render(IRenderer renderer)
-		{
-		}
-	}
-
 	[TestClass]
 	public class VisualBaseTest
 	{
@@ -34,7 +11,7 @@ namespace KanbanSimulation.Console.View.Tests
 		public void InitialWidthMustBeZeroOrGreater()
 		{
 			
-			Action a = () => new ConcreateVisualBase(-1, 0);
+			Action a = () => new VisualBaseMock(-1, 0);
 
 			a.ShouldThrow<ArgumentException>();
 		}
@@ -42,7 +19,7 @@ namespace KanbanSimulation.Console.View.Tests
 		[TestMethod]
 		public void InitialHeightMustBeZeroOrGreater()
 		{
-			Action a = () => new ConcreateVisualBase(0, -1);
+			Action a = () => new VisualBaseMock(0, -1);
 
 			a.ShouldThrow<ArgumentException>();
 		}
@@ -50,7 +27,7 @@ namespace KanbanSimulation.Console.View.Tests
 		[TestMethod]
 		public void WidthMustBeZeroOrGreater()
 		{
-			var v = new ConcreateVisualBase(0, 0);
+			var v = new VisualBaseMock(0, 0);
 			Action a = () => v.SetWidth(-1);
 
 			a.ShouldThrow<ArgumentException>();
@@ -60,10 +37,30 @@ namespace KanbanSimulation.Console.View.Tests
 		[TestMethod]
 		public void HeightMustBeZeroOrGreater()
 		{
-			var v = new ConcreateVisualBase(0, 0);
+			var v = new VisualBaseMock(0, 0);
 			Action a = () => v.SetHeight(-1);
 
 			a.ShouldThrow<ArgumentException>();
+			v.Height.Should().Be(0);
+		}
+
+
+		[TestMethod]
+		public void VisualShouldBeVisibleByDefaultAfterCreation()
+		{
+			var v = new VisualBaseMock(10, 10);
+
+			v.Visible.Should().Be(true);
+		}
+
+		[TestMethod]
+		public void WidthAndHeightInvisibleVisualShouldBeZero()
+		{
+			var v = new VisualBaseMock(10, 10);
+
+			v.Visible = false;
+
+			v.Width.Should().Be(0);
 			v.Height.Should().Be(0);
 		}
 	}
