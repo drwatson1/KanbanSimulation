@@ -12,16 +12,19 @@ namespace KanbanSimulation.Simulations
 	{
 		private static readonly IdGeneratorService identity = new IdGeneratorService();
 
-		static public WorkProcess CreateNoConstraintsWorkProcess()
+		static public WorkProcess CreateNoConstraintsWorkProcess(int bottleneck = 5)
 		{
-			return new WorkProcess()
+			if (bottleneck < 1)
+				throw new ArgumentException("Must be 1 or greater", nameof(bottleneck));
+
+			return new WorkProcess($"Work process with out constraints (bottleneck={bottleneck})")
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
-				.AddOperation(new Operation(5, identity.NextId()))
+				.AddOperation(new Operation(bottleneck, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()));
 		}

@@ -17,14 +17,14 @@ namespace KanbanSimulation.Console
 		{
 			try
 			{
-				var form = new SimulationForm("Test");
+				var workProcess = WorkProcessFactory.CreateNoConstraintsWorkProcess(1);
+				var sim = new Simulation(workProcess);
+
+				var form = new SimulationForm(workProcess.Name);
 
 				form.Position = new Position(System.Console.CursorLeft, System.Console.CursorTop);
 
 				var r = new ConsoleRenderer();
-
-				var workProcess = WorkProcessFactory.CreateNoConstraintsWorkProcess();
-				var sim = new Simulation(workProcess);
 
 				var controller = new SimulationFormController(form, sim);
 

@@ -34,9 +34,9 @@ namespace KanbanSimulation.Console.Controllers
 			Form.CurrentWorkInProgress.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.Process.WorkInProgress);
 			Form.CompletedWorkItemsCount.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.Process.CompletedWorkItems);
 			Form.CompletedWorkItemsProgress.DataSource = new WorkInProgressViewDataSource(() => Sim.Process.CompletedWorkItems);
-			Form.LeadTime.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.LeadTime);
-			Form.WorkInProgress.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.WorkInProgress);
-			Form.Throughput.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.Throughput);
+			Form.LeadTime.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasuredLeadTime);
+			Form.WorkInProgress.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasuredWorkInProgress);
+			Form.Throughput.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.MeasuredThroughput);
 
 			BindOperations();
 		}

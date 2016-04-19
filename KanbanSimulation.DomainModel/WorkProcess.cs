@@ -26,6 +26,7 @@ namespace KanbanSimulation.DomainModel
 		public IReadOnlyList<IOperation> Operations => operations;
 		public int ElapsedTicks { get; private set; }
 		public int CompletedWorkItems { get; private set; }
+		public readonly string Name;
 
 		#endregion Public properties
 
@@ -59,16 +60,18 @@ namespace KanbanSimulation.DomainModel
 
 		#region ctors
 
-		public WorkProcess(int id = 0)
-			: this(new WorkItemQueue(1), new WorkItemQueue(2), id)
+		public WorkProcess(string name = "", int id = 0)
+			: this(new WorkItemQueue(1), new WorkItemQueue(2), name, id)
 		{
 		}
 
-		protected WorkProcess(WorkItemQueue input, WorkItemQueue output, int id = 0)
+		protected WorkProcess(WorkItemQueue input, WorkItemQueue output, string name, int id = 0)
 			: base(id)
 		{
 			inputQueue = input;
 			outputQueue = output;
+			Name = name;
+
 			ConfigureStateMachine();
 		}
 

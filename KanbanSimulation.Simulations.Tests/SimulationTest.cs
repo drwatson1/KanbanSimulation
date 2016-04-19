@@ -72,14 +72,14 @@ namespace KanbanSimulation.Simulations.Tests
 				s.Tick();
 			}
 
-			s.CurrentState.Should().Be(2);
+			s.CurrentWorkFlowState.Should().Be(2);
 
-			while(s.CurrentState == 2)
+			while(s.CurrentWorkFlowState == 2)
 			{
 				s.Tick();
 			}
 
-			s.CurrentState.Should().Be(3);
+			s.CurrentWorkFlowState.Should().Be(3);
 		
 		}
 	}
