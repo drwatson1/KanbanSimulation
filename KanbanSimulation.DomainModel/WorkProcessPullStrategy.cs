@@ -14,5 +14,10 @@ namespace KanbanSimulation.DomainModel
 		{
 			op.OutputQueue = op.DoneQueue;
 		}
+
+		public void Push(Operation op, WorkItemQueue inputQueue, WorkItem wi)
+		{
+			inputQueue.Push(wi);
+		}
 	}
 }

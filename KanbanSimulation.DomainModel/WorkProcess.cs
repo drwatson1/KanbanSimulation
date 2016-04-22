@@ -11,10 +11,11 @@ namespace KanbanSimulation.DomainModel
 	{
 		#region private properties
 
+		private static readonly IWorkProcessStrategy DefaultStrategy = new WorkProcessPushStrategy();
+
 		private readonly List<Operation> operations = new List<Operation>();
 		private readonly WorkItemQueue inputQueue;
 		private readonly WorkItemQueue outputQueue;
-		private Operation LastOperation;
 		private StateMachine stateMachine;
 		private IWorkProcessStrategy Strategy;
 
@@ -62,22 +63,34 @@ namespace KanbanSimulation.DomainModel
 		#region ctors
 
 		public WorkProcess(IWorkProcessStrategy strategy, string name = "", int id = 0)
-			: this(name, id)
+			: this(strategy, new WorkItemQueue(1), new WorkItemQueue(2), name, id)
 		{
-			Strategy = strategy;
 		}
 
 		public WorkProcess(string name = "", int id = 0)
-			: this(new WorkItemQueue(1), new WorkItemQueue(2), name, id)
+			: this(DefaultStrategy, name, id)
 		{
 		}
 
 		protected WorkProcess(WorkItemQueue input, WorkItemQueue output, string name, int id = 0)
+			: this(DefaultStrategy, input, output, name, id)
+		{
+		}
+
+		protected WorkProcess(IWorkProcessStrategy strategy, WorkItemQueue input, WorkItemQueue output, string name, int id = 0)
 			: base(id)
 		{
+			if (output == null)
+				throw new ArgumentNullException(nameof(output));
+			if (input == null)
+				throw new ArgumentNullException(nameof(input));
+			if (strategy == null)
+				throw new ArgumentNullException(nameof(strategy));
+
 			inputQueue = input;
 			outputQueue = output;
 			Name = name;
+			Strategy = strategy;
 
 			ConfigureStateMachine();
 		}
@@ -88,26 +101,33 @@ namespace KanbanSimulation.DomainModel
 
 		public WorkProcess AddOperation(Operation operation)
 		{
+			Operation previousOperation = null;
+			if (operations.Count > 0)   // Has previous operation
+			{
+				previousOperation = operations[operations.Count-1];
+			}
+
 			operations.Add(operation);
 
-			if (LastOperation != null)
+			if (previousOperation != null)	
 			{
-				LastOperation.OutputQueue = operation;
+				Strategy.ConfigureOutputQueue(previousOperation, operation);
+				Strategy.ConfigureInputQueue(operation, previousOperation);
 			}
 			else
 			{
-				operation.InputQueue = inputQueue;
+				Strategy.ConfigureInputQueue(operation, inputQueue);
 			}
-
-			LastOperation = operation;
-			LastOperation.OutputQueue = outputQueue;
+			operation.OutputQueue = outputQueue;
 
 			return this;
 		}
 
 		public WorkProcess Push(WorkItem workItem)
 		{
-			inputQueue.Push(workItem);
+			Strategy.Push(operations[0], inputQueue, workItem);
+
+			CalculateWorkInProgress();
 
 			return this;
 		}

@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
 using System.Linq;
 using KanbanSimulation.DomainModel.Events;
+using KanbanSimulation.DomainModel.Interfaces;
 
 namespace KanbanSimulation.DomainModel.Tests
 {
@@ -19,6 +20,16 @@ namespace KanbanSimulation.DomainModel.Tests
 			return wp;
 		}
 
+		private WorkProcess CreateWorkProcess(IWorkProcessStrategy strategy)
+		{
+			WorkProcess wp = new WorkProcess(strategy)
+				.AddOperation(new Operation())
+				.AddOperation(new Operation(2))
+				.AddOperation(new Operation());
+
+			return wp;
+		}
+
 		[TestMethod]
 		public void WorkProcessCanReturnAddedOperations()
 		{
@@ -28,15 +39,16 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
-		public void InputQueueContainsAllPushedWorkItems()
+		public void InputQueueContainsAllPushedWorkItemsForPullStrategy()
 		{
-			var wp = CreateWorkProcess();
+			var wp = CreateWorkProcess(new WorkProcessPullStrategy());
 
 			wp
 				.Push(new WorkItem(1))
 				.Push(new WorkItem(2));
 
 			wp.InputQueue.Count.Should().Be(2);
+			wp.WorkInProgress.Should().Be(0);
 		}
 
 		[TestMethod]
@@ -161,17 +173,37 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			wp.DomainEvents.Where(e => (e is WorkInProgressChangedEvent) && object.ReferenceEquals((e as WorkInProgressChangedEvent).Sender, wp)).Should().HaveCount(6);
 		}
-		/*
+		
 		[TestMethod]
-		public void WorkProcessMustChangeStrategyForOperations()
+		public void WorkProcessShouldPushToInProgressQueueWithPushStrategy()
 		{
-			var op1 = new Operation();	// push
+			var op1 = new Operation();
+			WorkProcess wp = new WorkProcess(new WorkProcessPushStrategy())
+				.AddOperation(op1)
+				.AddOperation(new Operation(2))
+				.AddOperation(new Operation());
+
+			wp.Push(new WorkItem());
+
+			op1.InProgress.Count.Should().Be(1);
+			wp.WorkInProgress.Should().Be(1);
+		}
+
+
+		[TestMethod]
+		public void WorkProcessShouldPushToInputQueueWithPullStrategy()
+		{
+			var op1 = new Operation();
 			WorkProcess wp = new WorkProcess(new WorkProcessPullStrategy())
 				.AddOperation(op1)
 				.AddOperation(new Operation(2))
 				.AddOperation(new Operation());
 
-			op1.Strategy.Should().BeOfType<WorkProcessPullStrategy>();
+			wp.Push(new WorkItem());
+
+			op1.InProgress.Count.Should().Be(0);
+			wp.InputQueue.Count.Should().Be(1);
+			wp.WorkInProgress.Should().Be(0);
 		}
 
 		[TestMethod]
@@ -180,7 +212,7 @@ namespace KanbanSimulation.DomainModel.Tests
 			var op1 = new Operation();  // push
 			WorkProcess wp = new WorkProcess(new WorkProcessPullStrategy())
 				.AddOperation(op1)
-				.AddOperation(new Operation(2))
+				.AddOperation(new Operation())
 				.AddOperation(new Operation());
 
 			wp.Push(new WorkItem(1));
@@ -188,6 +220,22 @@ namespace KanbanSimulation.DomainModel.Tests
 			wp.Tick(9);
 
 			wp.Done.Should().HaveCount(1);
-		}*/
+		}
+
+		[TestMethod]
+		public void ShouldMoveCompletedWorkItemsToOutputQueueWithPushStrategy()
+		{
+			var op1 = new Operation();  // push
+			WorkProcess wp = new WorkProcess(new WorkProcessPushStrategy())
+				.AddOperation(op1)
+				.AddOperation(new Operation())
+				.AddOperation(new Operation());
+
+			wp.Push(new WorkItem(1));
+
+			wp.Tick(9);
+
+			wp.Done.Should().HaveCount(1);
+		}
 	}
 }
