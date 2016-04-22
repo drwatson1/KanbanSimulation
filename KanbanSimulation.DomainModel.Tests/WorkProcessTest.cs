@@ -161,7 +161,7 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			wp.DomainEvents.Where(e => (e is WorkInProgressChangedEvent) && object.ReferenceEquals((e as WorkInProgressChangedEvent).Sender, wp)).Should().HaveCount(6);
 		}
-
+		/*
 		[TestMethod]
 		public void WorkProcessMustChangeStrategyForOperations()
 		{
@@ -188,6 +188,6 @@ namespace KanbanSimulation.DomainModel.Tests
 			wp.Tick(9);
 
 			wp.Done.Should().HaveCount(1);
-		}
+		}*/
 	}
 }

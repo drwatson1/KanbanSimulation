@@ -105,7 +105,8 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.TakeNewWorkItems();
 			op.DoWork();
 
-			op.InProgress.Count.Should().Be(1);
+			op.WorkInProgress.Should().Be(1);
+			op.InProgress.Count.Should().Be(0);
 			op.Done.Count.Should().Be(0);
 			output.Count.Should().Be(0);
 		}
@@ -129,27 +130,6 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.InProgress.Count.Should().Be(0);
 			output.Count.Should().Be(1);
 			op.Done.Count.Should().Be(0);
-		}
-
-		[TestMethod]
-		public void CompletedOperationMovedToDoneForPullStrategy()
-		{
-			WorkItemQueue input = new WorkItemQueue();
-			WorkItemQueue output = new WorkItemQueue();
-
-			Operation op = new Operation(new WorkProcessPullStrategy(), input, output);
-
-			WorkItem wi = new WorkItem(1);
-			input.Push(wi);
-			input.Top.Tick();
-
-			op.TakeNewWorkItems();
-			op.DoWork();
-			op.MoveCompletedWorkItems();
-
-			op.InProgress.Count.Should().Be(0);
-			output.Count.Should().Be(0);
-			op.Done.Count.Should().Be(1);
 		}
 
 		[TestMethod]
@@ -181,34 +161,6 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
-		public void CompletedOperationShouldIncrementLeadTimeForPullStrategy()
-		{
-			WorkItemQueue input = new WorkItemQueue();
-			WorkItemQueue output = new WorkItemQueue();
-
-			Operation op = new Operation(new WorkProcessPullStrategy(), input, output);
-
-			WorkItem wi = new WorkItem(1);
-			input.Push(wi);
-			input.Top.Tick();
-
-			op.TakeNewWorkItems();
-			op.DoWork();
-			op.MoveCompletedWorkItems();
-
-			wi.LeadTime.Should().Be(2);
-
-			WorkItem wi1 = new WorkItem(1);
-			input.Push(wi1);
-
-			op.TakeNewWorkItems();
-			op.DoWork();
-			op.MoveCompletedWorkItems();
-
-			wi.LeadTime.Should().Be(3);
-		}
-
-		[TestMethod]
 		public void NewOperationStartsAfterTakeNewWorkItemFromInputQueue()
 		{
 			WorkItemQueue input = new WorkItemQueue();
@@ -228,10 +180,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		[TestMethod]
 		public void NewOperationStartsAfterTakeNewWorkItemFromInProgress()
 		{
-			WorkItemQueue input = new WorkItemQueue();
-			WorkItemQueue output = new WorkItemQueue();
-
-			Operation op = new Operation(input, output);
+			Operation op = new Operation();
 
 			WorkItem wi = new WorkItem(1);
 			op.Push(wi);
@@ -245,10 +194,9 @@ namespace KanbanSimulation.DomainModel.Tests
 		[TestMethod]
 		public void SecondWorkItemStartNewOperationOnlyAfterCompletePrevious()
 		{
-			WorkItemQueue input = new WorkItemQueue();
-			WorkItemQueue output = new WorkItemQueue();
-
-			Operation op = new Operation(input, output);
+			var outputQueue = new WorkItemQueue(); 
+			Operation op = new Operation();
+			op.OutputQueue = outputQueue;
 
 			WorkItem wi1 = new WorkItem(1);
 			op.Push(wi1);
@@ -265,7 +213,7 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.DoWork();
 			op.MoveCompletedWorkItems();
 
-			output.Count.Should().Be(2);
+			outputQueue.Count.Should().Be(2);
 
 			wi2.LeadTime.Should().Be(2);
 			wi2.CurrentOperationProgress.Should().Be(1);
@@ -276,10 +224,9 @@ namespace KanbanSimulation.DomainModel.Tests
 		{
 			// В InProgress у нас два WI. После завершения работы над обоими - у первого LeadTime будет 1, у второго - 2
 
-			WorkItemQueue input = new WorkItemQueue();
-			WorkItemQueue output = new WorkItemQueue();
+			Operation op = new Operation();
+			op.OutputQueue = new WorkItemQueue();
 
-			Operation op = new Operation(input, output);
 
 			WorkItem wi1 = new WorkItem(1);
 			op.Push(wi1);
@@ -319,6 +266,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
+		[Ignore]
 		public void TakeNewWorkItemsFromOuterQueueMustRaisePushAndWipChangedEvent()
 		{
 			WorkItemQueue input = new WorkItemQueue();
@@ -364,7 +312,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
-		public void TakeNewWorkItemsMustNotRaiseEvents()
+		public void TakeNewWorkItemsMustRaiseEventsWithoutStrategy()
 		{
 			Operation op = new Operation();
 
@@ -372,7 +320,25 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.ClearEvents();
 			op.TakeNewWorkItems();
 
-			op.DomainEvents.Should().HaveCount(0);
+			op.DomainEvents.Should().ContainSingle(x => (x as WorkItemQueueChangedEvent) != null && (x as WorkItemQueueChangedEvent).Operation == WorkItemQueueChangedEvent.QueueOperation.Pull);
+		}
+
+		[TestMethod]
+		[Ignore]
+		public void TakeNewWorkItemsMustNotRaiseEventsWithPullStrategy()
+		{
+			Operation op = new Operation();
+
+			var s = new WorkProcessPullStrategy();
+
+			var inputQueue = new WorkItemQueue();
+			s.ConfigureInputQueue(op, inputQueue);
+			inputQueue.Push(new WorkItem(1));
+
+			op.ClearEvents();
+			op.TakeNewWorkItems();
+
+			op.DomainEvents.Should().ContainSingle(x => (x as WorkInProgressChangedEvent) != null);
 		}
 
 		[TestMethod]
@@ -393,10 +359,8 @@ namespace KanbanSimulation.DomainModel.Tests
 		[TestMethod]
 		public void MoveCompletedWorkItemsToOuterQueueMustChangeWipForPushStrategy()
 		{
-			WorkItemQueue input = new WorkItemQueue();
-			WorkItemQueue output = new WorkItemQueue();
-
-			Operation op = new Operation(input, output);
+			Operation op = new Operation();
+			op.OutputQueue = new WorkItemQueue();
 
 			op.Push(new WorkItem(1));
 			op.TakeNewWorkItems();
@@ -405,42 +369,15 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.MoveCompletedWorkItems();
 
 			op.WorkInProgress.Should().Be(0);
-			op.DomainEvents.Should().HaveCount(2);
-			op.DomainEvents.Should().Contain(x => x is WorkInProgressChangedEvent);
-			op.DomainEvents.Should().Contain(x => x is WorkItemQueueChangedEvent);
-			(op.DomainEvents.Single(x => x is WorkItemQueueChangedEvent) as WorkItemQueueChangedEvent).Operation.Should().Be(WorkItemQueueChangedEvent.QueueOperation.Pull);
-		}
-
-		[TestMethod]
-		public void MoveCompletedWorkItemsToOuterQueueMustNotChangeWipForPullStrategy()
-		{
-			WorkItemQueue input = new WorkItemQueue();
-			WorkItemQueue output = new WorkItemQueue();
-
-			Operation op = new Operation(new WorkProcessPullStrategy(), input, output);
-
-			op.Push(new WorkItem(1));
-			op.TakeNewWorkItems();
-			op.DoWork();
-			op.ClearEvents();
-			op.MoveCompletedWorkItems();
-
-			op.WorkInProgress.Should().Be(1);
-			op.DomainEvents.Should().HaveCount(2);
-			op.DomainEvents.Should().NotContain(x => x is WorkInProgressChangedEvent);
-			var events = op.DomainEvents.Where(x => x is WorkItemQueueChangedEvent).ToList();
-			events.Count.Should().Be(2);
-			events.Should().Contain(x => (x as WorkItemQueueChangedEvent).Operation == WorkItemQueueChangedEvent.QueueOperation.Pull);
-			events.Should().Contain(x => (x as WorkItemQueueChangedEvent).Operation == WorkItemQueueChangedEvent.QueueOperation.Push);
 		}
 
 		[TestMethod]
 		public void ComplexityEqualsTwoShouldRequireFourDoWorkForTwoWorkItems()
 		{
-			WorkItemQueue input = new WorkItemQueue();
 			WorkItemQueue output = new WorkItemQueue();
 
-			Operation op = new Operation(input, output, 2);
+			Operation op = new Operation(2);
+			op.OutputQueue = output;
 
 			op.Push(new WorkItem(1));
 			op.TakeNewWorkItems();

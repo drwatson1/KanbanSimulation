@@ -10,38 +10,38 @@ namespace KanbanSimulation.DomainModel.Tests
 	public class WorkProcessPushStrategyTest
 	{
 		[TestMethod]
-		public void PushStrategyShouldPushToOutputQueue()
+		public void ShouldPushToOutputQueue()
 		{
 			var s = new WorkProcessPushStrategy();
 
-			var wi = new WorkItem();
-
-			var doneQueue = new WorkItemQueue();
+			var op = new Operation();
 			var outputQueue = new WorkItemQueue();
-			s.Push(wi, doneQueue, outputQueue);
+			s.ConfigureOutputQueue(op, outputQueue);
+
+			op.Push(new WorkItem());
+
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
 
 			outputQueue.Count.Should().Be(1);
-			doneQueue.Count.Should().Be(0);
+			op.Done.Count.Should().Be(0);
 		}
 
 		[TestMethod]
-		public void PushStrategyShouldPullFromOwnQueue()
+		public void ShouldPullFromInProgressQueue()
 		{
 			var s = new WorkProcessPushStrategy();
 
-			var wi1 = new WorkItem();
-			var wi2 = new WorkItem();
-
 			var inputQueue = new WorkItemQueue();
-			var inProgressQueue = new WorkItemQueue();
+			var op = new Operation();
 
-			inputQueue.Push(wi1);
-			inProgressQueue.Push(wi2);
+			op.Push(new WorkItem());
+			inputQueue.Push(new WorkItem());
 
-			s.Pull(inputQueue, inProgressQueue);
+			s.ConfigureInputQueue(op, inputQueue);
 
-			inputQueue.Count.Should().Be(0);
-			inProgressQueue.Count.Should().Be(2);
+			inputQueue.Count.Should().Be(1);
 		}
 	}
 }

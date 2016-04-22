@@ -102,11 +102,6 @@ namespace KanbanSimulation.DomainModel
 			LastOperation = operation;
 			LastOperation.OutputQueue = outputQueue;
 
-			if (Strategy != null)
-			{
-				operation.Strategy = Strategy;
-			}
-
 			return this;
 		}
 

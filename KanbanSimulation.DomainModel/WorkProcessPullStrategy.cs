@@ -5,24 +5,14 @@ namespace KanbanSimulation.DomainModel
 {
 	public class WorkProcessPullStrategy : IWorkProcessStrategy
 	{
-		public void Push(WorkItem wi, IOutputQueue doneQueue, IOutputQueue outputQueue)
+		public void ConfigureInputQueue(Operation op, IInputQueue inputQueue)
 		{
-			if (wi == null)
-				throw new ArgumentNullException(nameof(wi));
-			if (outputQueue == null)
-				throw new ArgumentNullException(nameof(outputQueue));
-			if (doneQueue == null)
-				throw new ArgumentNullException(nameof(doneQueue));
-
-			doneQueue.Push(wi);
+			op.InputQueue = inputQueue;
 		}
 
-		public void Pull(IInputQueue inputQueue, IOutputQueue inProgressQueue)
+		public void ConfigureOutputQueue(Operation op, IOutputQueue outputQueue)
 		{
-			if (object.ReferenceEquals(inputQueue, inProgressQueue) || inputQueue.Empty)
-				return;
-
-			inProgressQueue.Push(inputQueue.Pull());
+			op.OutputQueue = op.DoneQueue;
 		}
 	}
 }

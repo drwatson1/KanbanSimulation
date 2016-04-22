@@ -8,22 +8,26 @@ namespace KanbanSimulation.DomainModel.Tests
 	public class WorkProcessPullStrategyTest
 	{
 		[TestMethod]
-		public void PullStrategyShouldPushToOutputQueue()
+		public void OperationShouldPushToDoneQueue()
 		{
 			var s = new WorkProcessPullStrategy();
 
-			var wi = new WorkItem();
-
-			var doneQueue = new WorkItemQueue();
+			var op = new Operation();
 			var outputQueue = new WorkItemQueue();
-			s.Push(wi, doneQueue, outputQueue);
+			s.ConfigureOutputQueue(op, outputQueue);
+
+			op.Push(new WorkItem());
+
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
 
 			outputQueue.Count.Should().Be(0);
-			doneQueue.Count.Should().Be(1);
+			op.Done.Count.Should().Be(1);
 		}
 
 		[TestMethod]
-		public void PullStrategyShouldPullFromInputQueue()
+		public void OperationShouldPullFromInputQueue()
 		{
 			var s = new WorkProcessPullStrategy();
 
@@ -31,15 +35,15 @@ namespace KanbanSimulation.DomainModel.Tests
 			var wi2 = new WorkItem();
 
 			var inputQueue = new WorkItemQueue();
-			var inProgressQueue = new WorkItemQueue();
+
+			var op = new Operation();
+
+			s.ConfigureInputQueue(op, inputQueue);
 
 			inputQueue.Push(wi1);
-			inProgressQueue.Push(wi2);
-
-			s.Pull(inputQueue, inProgressQueue);
+			op.TakeNewWorkItems();
 
 			inputQueue.Count.Should().Be(0);
-			inProgressQueue.Count.Should().Be(2);
 		}
 	}
 }

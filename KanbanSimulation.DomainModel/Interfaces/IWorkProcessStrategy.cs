@@ -2,8 +2,7 @@
 {
 	public interface IWorkProcessStrategy
 	{
-		void Pull(IInputQueue inputQueue, IOutputQueue inProgressQueue);
-
-		void Push(WorkItem wi, IOutputQueue doneQueue, IOutputQueue outputQueue);
+		void ConfigureInputQueue(Operation op, IInputQueue inputQueue);
+		void ConfigureOutputQueue(Operation op, IOutputQueue outputQueue);
 	}
 }

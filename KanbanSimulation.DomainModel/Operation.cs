@@ -12,59 +12,43 @@ namespace KanbanSimulation.DomainModel
 	{
 		#region Private properties
 
-		private static IWorkProcessStrategy DefaultStrategy = new WorkProcessPushStrategy();
 		private WorkItem CurrentWorkItem; // -> Соответствует InProgress.Top, если над ним ведётся работа
 
-		private readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
-		private readonly WorkItemQueue DoneQueue = new WorkItemQueue();
+		public readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
+		public readonly WorkItemQueue DoneQueue = new WorkItemQueue();
+		private int ActiveWorkItemsCount => CurrentWorkItem != null ? 1 : 0;
 
 		#endregion Private properties
 
 		#region Public properties
 
-		public IWorkProcessStrategy Strategy { get; set; }
 		public IInputQueue InputQueue { get; set; }
 		public IOutputQueue OutputQueue { get; set; }
 
 		public int Complexity { get; private set; }
 		public IReadOnlyList<IWorkItem> InProgress => InProgressQueue;
 		public IReadOnlyList<IWorkItem> Done => DoneQueue;
-		public int WorkInProgress => InProgressQueue.Count + DoneQueue.Count;
+		public int WorkInProgress => InProgressQueue.Count + DoneQueue.Count + ActiveWorkItemsCount;
 
 		#endregion Public properties
 
 		#region ctors
 
-		public Operation(IWorkProcessStrategy strategy, IInputQueue pullFrom, IOutputQueue pushTo, int complexity = 1, int id = 0)
-			: base(id)
+		public Operation(IInputQueue pullFrom, IOutputQueue pushTo, int complexity = 1, int id = 0)
+			: this(complexity, id)
 		{
 			if (pushTo == null)
 				throw new ArgumentNullException(nameof(pushTo));
 			if (pullFrom == null)
 				throw new ArgumentNullException(nameof(pullFrom));
-			if (strategy == null)
-				throw new ArgumentNullException(nameof(strategy));
-			if (complexity < 1)
-				throw new ArgumentException(nameof(complexity));
 
 			InputQueue = pullFrom;
 			OutputQueue = pushTo;
-
-			Complexity = complexity;
-			Strategy = strategy;
 		}
 
-		public Operation(IInputQueue pullFrom, IOutputQueue pushTo, int complexity = 1, int id = 0)
-			: this(DefaultStrategy, pullFrom, pushTo, complexity, id)
-		{
-		}
-
-		public Operation(IWorkProcessStrategy strategy, int complexity = 1, int id = 0)
+		public Operation(int complexity = 1, int id = 0)
 			: base(id)
 		{
-			if (strategy == null)
-				throw new ArgumentNullException(nameof(strategy));
-
 			if (complexity < 1)
 				throw new ArgumentException();
 
@@ -72,12 +56,6 @@ namespace KanbanSimulation.DomainModel
 			OutputQueue = DoneQueue;
 
 			Complexity = complexity;
-			Strategy = strategy;
-		}
-
-		public Operation(int complexity = 1, int id = 0)
-			: this(DefaultStrategy, complexity, id)
-		{
 		}
 
 		#endregion ctors
@@ -86,12 +64,10 @@ namespace KanbanSimulation.DomainModel
 
 		public void TakeNewWorkItems()
 		{
-			Strategy.Pull(InputQueue, InProgressQueue);
-
 			// Готовимся приняться за работу над очередным WI
-			if (CurrentWorkItem == null && !InProgressQueue.Empty)
+			if (CurrentWorkItem == null && !InputQueue.Empty)
 			{
-				CurrentWorkItem = InProgressQueue.Top;
+				CurrentWorkItem = InputQueue.Pull();
 				CurrentWorkItem.StartNewOperation();
 			}
 
@@ -100,6 +76,8 @@ namespace KanbanSimulation.DomainModel
 
 		public void DoWork()
 		{
+			CurrentWorkItem?.Tick();
+
 			InProgressQueue.Tick();
 			DoneQueue.Tick();
 		}
@@ -111,9 +89,9 @@ namespace KanbanSimulation.DomainModel
 
 			if (CurrentWorkItem.CurrentOperationProgress >= Complexity)
 			{
-				Strategy.Push(InProgressQueue.Pull(), DoneQueue, OutputQueue);
+				OutputQueue.Push(CurrentWorkItem);
 
-				CurrentWorkItem = null; // Закончили работу
+				CurrentWorkItem = null; // Complete work
 			}
 
 			CollectEvents();
@@ -134,7 +112,7 @@ namespace KanbanSimulation.DomainModel
 		}
 
 		#endregion IWorkItemQueue implementation
-		
+
 		public override string ToString()
 		{
 			return $"InProgress: {InProgress.Count}, Done: {Done.Count}";
