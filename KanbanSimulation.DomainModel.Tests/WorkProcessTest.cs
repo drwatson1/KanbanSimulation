@@ -117,22 +117,9 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			wi.LeadTime.Should().Be(4);
 		}
-
+		
 		[TestMethod]
-		public void DoneWorkItemMustGenerateWorkCompletedEvent()
-		{
-			var wp = CreateWorkProcess();
-
-			var wi = new WorkItem(1);
-			wp.Push(wi);
-
-			wp.Tick(12);
-
-			wp.DomainEvents.Where(e => e is WorkCompletedEvent).Should().HaveCount(1);
-		}
-
-		[TestMethod]
-		public void SomeCompeletedWorkItemsMustGenerateCorrespondentCountOfWorkCompletedEvent()
+		public void SomeCompeletedWorkItemsMustGenerateCorrespondentCountOfCompletedWorkitems()
 		{
 			var wp = CreateWorkProcess();
 
@@ -143,37 +130,8 @@ namespace KanbanSimulation.DomainModel.Tests
 			wp.Tick(24);
 
 			wp.CompletedWorkItems.Should().Be(3);
-			wp.DomainEvents.Where(e => e is WorkCompletedEvent).Should().HaveCount(3);
 		}
-
-		[TestMethod]
-		public void NotCompeletedWorkItemsHasNoInfluenceOnCountOfWorkCompletedEvents()
-		{
-			var wp = CreateWorkProcess();
-
-			wp.Push(new WorkItem(1));
-			wp.Push(new WorkItem(2));
-			wp.Push(new WorkItem(3));
-
-			wp.Tick(23);
-
-			wp.DomainEvents.Where(e => e is WorkCompletedEvent).Should().HaveCount(2);
-		}
-
-		[TestMethod]
-		public void WorkInProgressChangedMustBeCorrectlyGenerated()
-		{
-			var wp = CreateWorkProcess();
-
-			wp.Push(new WorkItem(1));
-			wp.Push(new WorkItem(2));
-			wp.Push(new WorkItem(3));
-
-			wp.Tick(24);
-
-			wp.DomainEvents.Where(e => (e is WorkInProgressChangedEvent) && object.ReferenceEquals((e as WorkInProgressChangedEvent).Sender, wp)).Should().HaveCount(6);
-		}
-		
+				
 		[TestMethod]
 		public void WorkProcessShouldPushToInProgressQueueWithPushStrategy()
 		{

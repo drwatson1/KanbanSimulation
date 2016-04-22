@@ -74,7 +74,6 @@ namespace KanbanSimulation.Simulations
 
 		public bool Tick()
 		{
-			Process.ClearEvents();
 			Workflow.NextStep();
 			return Workflow.IsFinished;
 		}

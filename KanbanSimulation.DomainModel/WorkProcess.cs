@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkProcess : EventSource, IOperation
+	public class WorkProcess : Entity, IOperation
 	{
 		#region private properties
 
@@ -125,6 +125,11 @@ namespace KanbanSimulation.DomainModel
 
 		public WorkProcess Push(WorkItem workItem)
 		{
+			if( operations.Count == 0 )
+			{
+				throw new WorkProcessNotConfiguredException();
+			}
+
 			Strategy.Push(operations[0], inputQueue, workItem);
 
 			CalculateWorkInProgress();
@@ -137,16 +142,18 @@ namespace KanbanSimulation.DomainModel
 			if (count < 1)
 				throw new ArgumentException("Count must be greater zero");
 
+			var previousDoneCount = Done.Count;
+
 			for (int i = 0; i < count; ++i)
 			{
 				stateMachine.NextStep();
-				CalculateWorkInProgress();
 			}
 
-			CollectEvents();
-
 			ElapsedTicks += count;
-			
+
+			CompletedWorkItems += Done.Count - previousDoneCount;
+			CalculateWorkInProgress();
+
 			return this;
 		}
 
@@ -154,38 +161,9 @@ namespace KanbanSimulation.DomainModel
 
 		#region Private methods
 
-		private void CollectEvents()
-		{
-			// If outputQueue was pushed with work item - this work item was completed. So we must create event about this
-			var completed = outputQueue.DomainEvents.Where(e => (e is WorkItemQueueChangedEvent) && (e as WorkItemQueueChangedEvent).Operation == WorkItemQueueChangedEvent.QueueOperation.Push).Cast<WorkItemQueueChangedEvent>();
-
-			operations.ForEach(CollectEvents);
-
-			foreach (var e in completed)
-			{
-				AddDomainEvent(new WorkCompletedEvent(this, e.WorkItem));
-				++CompletedWorkItems;
-			}
-
-			outputQueue.ClearEvents();
-			inputQueue.ClearEvents();
-		}
-
-		private void CollectEvents(Operation op)
-		{
-			op.DomainEvents.ToList().ForEach(AddDomainEvent);
-			op.ClearEvents();
-		}
-
 		private void CalculateWorkInProgress()
 		{
-			var oldWorkInProgress = WorkInProgress;
 			WorkInProgress = operations.Sum(o => o.WorkInProgress);
-
-			if (WorkInProgress != oldWorkInProgress)
-			{
-				AddDomainEvent(new WorkInProgressChangedEvent(this));
-			}
 		}
 
 		private void ConfigureStateMachine()

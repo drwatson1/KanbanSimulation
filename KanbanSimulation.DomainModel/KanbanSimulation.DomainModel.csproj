@@ -69,6 +69,7 @@
     <Compile Include="QueueIsEmptyException.cs" />
     <Compile Include="WorkItem.cs" />
     <Compile Include="WorkProcess.cs" />
+    <Compile Include="WorkProcessNotConfiguredException.cs" />
     <Compile Include="WorkProcessPullStrategy.cs" />
     <Compile Include="WorkProcessPushStrategy.cs" />
   </ItemGroup>

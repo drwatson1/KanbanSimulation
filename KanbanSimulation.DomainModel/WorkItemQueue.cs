@@ -1,5 +1,4 @@
 ﻿using KanbanSimulation.Core;
-using KanbanSimulation.DomainModel.Events;
 using KanbanSimulation.DomainModel.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,8 +6,14 @@ using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkItemQueue : EventSource, IWorkItemQueue, IInputQueue, IOutputQueue, IReadOnlyList<IWorkItem>, ICompletedWorkItems
+	public class WorkItemQueue : Entity, IWorkItemQueue, IInputQueue, IOutputQueue, IReadOnlyList<IWorkItem>, ICompletedWorkItems
 	{
+		#region private members
+
+		private readonly List<WorkItem> queue = new List<WorkItem>();
+
+		#endregion private members
+
 		#region Own interface
 
 		public WorkItemQueue(int id = 0)
@@ -39,8 +44,6 @@ namespace KanbanSimulation.DomainModel
 		public void Push(WorkItem wi)
 		{
 			queue.Add(wi);
-
-			Raise(wi, WorkItemQueueChangedEvent.QueueOperation.Push);
 		}
 
 		public WorkItem Pull()
@@ -51,11 +54,9 @@ namespace KanbanSimulation.DomainModel
 			var wi = queue[0];
 			queue.RemoveAt(0);
 
-			Raise(wi, WorkItemQueueChangedEvent.QueueOperation.Pull);
-
 			return wi;
 		}
-		
+
 		public bool Empty => queue.Count == 0;
 
 		#endregion IWorkItemQueue implementation
@@ -107,16 +108,5 @@ namespace KanbanSimulation.DomainModel
 		}
 
 		#endregion ICompletedWorkItems implementation
-
-		#region private members
-
-		private readonly List<WorkItem> queue = new List<WorkItem>();
-
-		private void Raise(WorkItem wi, WorkItemQueueChangedEvent.QueueOperation operation)
-		{
-			AddDomainEvent(new WorkItemQueueChangedEvent(this, wi, operation));
-		}
-
-		#endregion private members
 	}
 }

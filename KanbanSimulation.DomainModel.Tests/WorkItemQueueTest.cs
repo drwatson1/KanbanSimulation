@@ -92,43 +92,5 @@ namespace KanbanSimulation.DomainModel.Tests
 			wi0.LeadTime.Should().Be(1);
 			wi1.LeadTime.Should().Be(1);
 		}
-
-		[TestMethod]
-		public void QueueMustRaiseEventAfterPush()
-		{
-			WorkItemQueue q = new WorkItemQueue();
-
-			var wi0 = new WorkItem(3);
-			q.Push(wi0);
-
-			q.DomainEvents.Should().ContainSingle();
-
-			var ev = q.DomainEvents[0] as WorkItemQueueChangedEvent;
-			ev.Should().NotBeNull();
-
-			ev.Operation.Should().Be(WorkItemQueueChangedEvent.QueueOperation.Push);
-			ev.Sender.ShouldBeEquivalentTo(q);
-			ev.WorkItem.ShouldBeEquivalentTo(wi0);
-		}
-
-		[TestMethod]
-		public void QueueMustRaiseEventAfterPull()
-		{
-			WorkItemQueue q = new WorkItemQueue();
-
-			var wi0 = new WorkItem(3);
-			q.Push(wi0);
-			q.ClearEvents();
-			q.Pull();
-
-			q.DomainEvents.Should().ContainSingle();
-
-			var ev = q.DomainEvents[0] as WorkItemQueueChangedEvent;
-			ev.Should().NotBeNull();
-
-			ev.Operation.Should().Be(WorkItemQueueChangedEvent.QueueOperation.Pull);
-			ev.Sender.ShouldBeEquivalentTo(q);
-			ev.WorkItem.ShouldBeEquivalentTo(wi0);
-		}
 	}
 }

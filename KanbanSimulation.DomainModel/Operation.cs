@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class Operation : EventSource, IInputQueue, IOutputQueue, IOperation
+	public class Operation : Entity, IInputQueue, IOutputQueue, IOperation
 	{
 		#region Private properties
 
@@ -70,8 +70,6 @@ namespace KanbanSimulation.DomainModel
 				CurrentWorkItem = InputQueue.Pull();
 				CurrentWorkItem.StartNewOperation();
 			}
-
-			CollectEvents();
 		}
 
 		public void DoWork()
@@ -93,8 +91,6 @@ namespace KanbanSimulation.DomainModel
 
 				CurrentWorkItem = null; // Complete work
 			}
-
-			CollectEvents();
 		}
 
 		#endregion WorkFlow public methods
@@ -108,7 +104,6 @@ namespace KanbanSimulation.DomainModel
 		public void Push(WorkItem wi)
 		{
 			InProgressQueue.Push(wi);
-			CollectEvents();
 		}
 
 		#endregion IWorkItemQueue implementation
@@ -116,37 +111,6 @@ namespace KanbanSimulation.DomainModel
 		public override string ToString()
 		{
 			return $"InProgress: {InProgress.Count}, Done: {Done.Count}";
-		}
-
-		private void CollectEvents()
-		{
-			var newEvents = new List<IDomainEvent>();
-			newEvents.AddRange(InProgressQueue.DomainEvents);
-			newEvents.AddRange(DoneQueue.DomainEvents);
-
-			// WIP changed if push and pull events quantity does not equals
-			int pullCount = newEvents.Count(x =>
-			{
-				var e = x as WorkItemQueueChangedEvent;
-				if (e == null)
-					return false;
-				return e.Operation == WorkItemQueueChangedEvent.QueueOperation.Pull;
-			});
-			int pushCount = newEvents.Count(x =>
-			{
-				var e = x as WorkItemQueueChangedEvent;
-				if (e == null)
-					return false;
-				return e.Operation == WorkItemQueueChangedEvent.QueueOperation.Push;
-			});
-
-			newEvents.ForEach(AddDomainEvent);
-
-			if (pullCount != pushCount)
-				AddDomainEvent(new WorkInProgressChangedEvent(this));
-
-			InProgressQueue.ClearEvents();
-			DoneQueue.ClearEvents();
 		}
 	}
 }
