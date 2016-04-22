@@ -10,21 +10,30 @@ namespace KanbanSimulation.DomainModel
 {
 	public class Operation : EventSource, IInputQueue, IOutputQueue, IOperation
 	{
+		#region Private properties
+
 		private static IWorkProcessStrategy DefaultStrategy = new WorkProcessPushStrategy();
-
-		private IWorkProcessStrategy Strategy;
-
-		public IInputQueue InputQueue;
-		public IOutputQueue OutputQueue;
-
 		private WorkItem CurrentWorkItem; // -> Соответствует InProgress.Top, если над ним ведётся работа
 
 		private readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
 		private readonly WorkItemQueue DoneQueue = new WorkItemQueue();
 
+		#endregion Private properties
+
+		#region Public properties
+
+		public IWorkProcessStrategy Strategy { get; set; }
+		public IInputQueue InputQueue { get; set; }
+		public IOutputQueue OutputQueue { get; set; }
+
 		public int Complexity { get; private set; }
 		public IReadOnlyList<IWorkItem> InProgress => InProgressQueue;
 		public IReadOnlyList<IWorkItem> Done => DoneQueue;
+		public int WorkInProgress => InProgressQueue.Count + DoneQueue.Count;
+
+		#endregion Public properties
+
+		#region ctors
 
 		public Operation(IWorkProcessStrategy strategy, IInputQueue pullFrom, IOutputQueue pushTo, int complexity = 1, int id = 0)
 			: base(id)
@@ -71,7 +80,10 @@ namespace KanbanSimulation.DomainModel
 		{
 		}
 
-		// Берём в работу новый WorkItem
+		#endregion ctors
+
+		#region WorkFlow public methods
+
 		public void TakeNewWorkItems()
 		{
 			Strategy.Pull(InputQueue, InProgressQueue);
@@ -107,7 +119,7 @@ namespace KanbanSimulation.DomainModel
 			CollectEvents();
 		}
 
-		public int WorkInProgress => InProgressQueue.Count + DoneQueue.Count;
+		#endregion WorkFlow public methods
 
 		#region IWorkItemQueue implementation
 
@@ -122,7 +134,7 @@ namespace KanbanSimulation.DomainModel
 		}
 
 		#endregion IWorkItemQueue implementation
-
+		
 		public override string ToString()
 		{
 			return $"InProgress: {InProgress.Count}, Done: {Done.Count}";

@@ -16,6 +16,7 @@ namespace KanbanSimulation.DomainModel
 		private readonly WorkItemQueue outputQueue;
 		private Operation LastOperation;
 		private StateMachine stateMachine;
+		private IWorkProcessStrategy Strategy;
 
 		#endregion private properties
 
@@ -60,6 +61,12 @@ namespace KanbanSimulation.DomainModel
 
 		#region ctors
 
+		public WorkProcess(IWorkProcessStrategy strategy, string name = "", int id = 0)
+			: this(name, id)
+		{
+			Strategy = strategy;
+		}
+
 		public WorkProcess(string name = "", int id = 0)
 			: this(new WorkItemQueue(1), new WorkItemQueue(2), name, id)
 		{
@@ -95,6 +102,11 @@ namespace KanbanSimulation.DomainModel
 			LastOperation = operation;
 			LastOperation.OutputQueue = outputQueue;
 
+			if (Strategy != null)
+			{
+				operation.Strategy = Strategy;
+			}
+
 			return this;
 		}
 
@@ -119,7 +131,7 @@ namespace KanbanSimulation.DomainModel
 			CollectEvents();
 
 			ElapsedTicks += count;
-
+			
 			return this;
 		}
 

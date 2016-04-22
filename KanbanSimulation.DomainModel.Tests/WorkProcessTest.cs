@@ -148,7 +148,6 @@ namespace KanbanSimulation.DomainModel.Tests
 			wp.DomainEvents.Where(e => e is WorkCompletedEvent).Should().HaveCount(2);
 		}
 
-
 		[TestMethod]
 		public void WorkInProgressChangedMustBeCorrectlyGenerated()
 		{
@@ -161,6 +160,34 @@ namespace KanbanSimulation.DomainModel.Tests
 			wp.Tick(24);
 
 			wp.DomainEvents.Where(e => (e is WorkInProgressChangedEvent) && object.ReferenceEquals((e as WorkInProgressChangedEvent).Sender, wp)).Should().HaveCount(6);
+		}
+
+		[TestMethod]
+		public void WorkProcessMustChangeStrategyForOperations()
+		{
+			var op1 = new Operation();	// push
+			WorkProcess wp = new WorkProcess(new WorkProcessPullStrategy())
+				.AddOperation(op1)
+				.AddOperation(new Operation(2))
+				.AddOperation(new Operation());
+
+			op1.Strategy.Should().BeOfType<WorkProcessPullStrategy>();
+		}
+
+		[TestMethod]
+		public void ShouldMoveCompletedWorkItemsToOutputQueueWithPullStrategy()
+		{
+			var op1 = new Operation();  // push
+			WorkProcess wp = new WorkProcess(new WorkProcessPullStrategy())
+				.AddOperation(op1)
+				.AddOperation(new Operation(2))
+				.AddOperation(new Operation());
+
+			wp.Push(new WorkItem(1));
+
+			wp.Tick(9);
+
+			wp.Done.Should().HaveCount(1);
 		}
 	}
 }

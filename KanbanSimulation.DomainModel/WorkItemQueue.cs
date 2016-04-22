@@ -55,7 +55,7 @@ namespace KanbanSimulation.DomainModel
 
 			return wi;
 		}
-
+		
 		public bool Empty => queue.Count == 0;
 
 		#endregion IWorkItemQueue implementation
