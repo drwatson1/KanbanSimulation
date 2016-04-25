@@ -75,7 +75,7 @@ namespace KanbanSimulation.Simulations
 			var firstOp = new Operation(1, identity.NextId());
 			var bottleneckOp = new Operation(bottleneck, identity.NextId());
 
-			var wp = new KanbanWorkProcess(limit, $"TOC system (limit = {limit}, bottleneck={bottleneck})")
+			var wp = new WorkProcess(new WorkProcessPullStrategy(), $"TOC system (limit = {limit}, bottleneck={bottleneck})")
 				.AddOperation(firstOp)
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
@@ -87,7 +87,6 @@ namespace KanbanSimulation.Simulations
 				.AddOperation(new Operation(1, identity.NextId()));
 
 			firstOp.Constraint = new WipConstraint(bottleneckOp, 3);
-			bottleneckOp.Constraint = new DefaultConstraint();
 
 			return wp;
 		}
