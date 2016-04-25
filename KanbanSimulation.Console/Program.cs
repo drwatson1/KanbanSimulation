@@ -12,8 +12,8 @@ namespace KanbanSimulation.Console
 		{
 			try
 			{
-				var workProcess = WorkProcessFactory.CreateNoConstraintsPushWorkProcess(5);
-//				var workProcess = WorkProcessFactory.CreateNoConstraintsPullWorkProcess(5);
+//				var workProcess = WorkProcessFactory.CreateNoConstraintsPushWorkProcess(5);
+				var workProcess = WorkProcessFactory.CreateNoConstraintsPullWorkProcess(5);
 				var sim = new Simulation(workProcess);
 
 				var form = new SimulationForm(workProcess.Name);
@@ -32,8 +32,8 @@ namespace KanbanSimulation.Console
 				{
 					controller.Tick();
 					form.Render(r);
-					Thread.Sleep(100);
-					//System.Console.ReadLine();
+					//Thread.Sleep(500);
+					System.Console.ReadLine();
 				}
 
 				form.Render(r);

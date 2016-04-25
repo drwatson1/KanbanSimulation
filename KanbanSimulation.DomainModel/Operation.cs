@@ -66,11 +66,17 @@ namespace KanbanSimulation.DomainModel
 			if (!Constraint.CanTake(1))
 				return;
 
-			// Готовимся приняться за работу над очередным WI
-			if (CurrentWorkItem == null && !InputQueue.Empty)
+			if (InputQueue.Empty)
+				return;
+
+			if (CurrentWorkItem == null )
 			{
 				CurrentWorkItem = InputQueue.Pull();
 				CurrentWorkItem.StartNewOperation();
+			}
+			else
+			{
+				InProgressQueue.Push(InputQueue.Pull());
 			}
 		}
 

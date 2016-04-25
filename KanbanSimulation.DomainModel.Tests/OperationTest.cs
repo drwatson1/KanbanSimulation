@@ -403,5 +403,24 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.WorkInProgress.Should().Be(1);
 			input.Count.Should().Be(1);
 		}
+
+		[TestMethod]
+		public void ShouldPullEvenIfHaveExecutedWorkItem()
+		{
+			var input = new WorkItemQueue();
+			var op = new Operation(2);
+			op.InputQueue = input;
+
+			input.Push(new WorkItem());
+			input.Push(new WorkItem());
+
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			op.TakeNewWorkItems();
+
+			op.WorkInProgress.Should().Be(2);
+		}
 	}
 }
