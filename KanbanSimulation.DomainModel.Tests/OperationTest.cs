@@ -405,7 +405,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
-		public void ShouldPullEvenIfHaveExecutedWorkItem()
+		public void ShouldPullWorkItemIfHaveExecutedWorkItem()
 		{
 			var input = new WorkItemQueue();
 			var op = new Operation(2);
@@ -421,6 +421,29 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.TakeNewWorkItems();
 
 			op.WorkInProgress.Should().Be(2);
+		}
+
+		[TestMethod]
+		public void ShouldTakeInWorkFromInProgressIfHaveInputQueue()
+		{
+			var input = new WorkItemQueue();
+			var op = new Operation(2);
+			op.InputQueue = input;
+
+			input.Push(new WorkItem());
+			input.Push(new WorkItem());
+
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			op.TakeNewWorkItems();
+
+			op.InProgress.Should().HaveCount(0);
 		}
 	}
 }

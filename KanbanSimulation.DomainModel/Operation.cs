@@ -66,17 +66,16 @@ namespace KanbanSimulation.DomainModel
 			if (!Constraint.CanTake(1))
 				return;
 
-			if (InputQueue.Empty)
-				return;
-
-			if (CurrentWorkItem == null )
-			{
-				CurrentWorkItem = InputQueue.Pull();
-				CurrentWorkItem.StartNewOperation();
-			}
-			else
+			// InputQueue and InProgressQueue may be the same
+			if (!InputQueue.Empty && !object.ReferenceEquals(InProgressQueue, InputQueue) )
 			{
 				InProgressQueue.Push(InputQueue.Pull());
+			}
+
+			if (CurrentWorkItem == null && !InProgressQueue.Empty)
+			{
+				CurrentWorkItem = InProgressQueue.Pull();
+				CurrentWorkItem.StartNewOperation();
 			}
 		}
 
