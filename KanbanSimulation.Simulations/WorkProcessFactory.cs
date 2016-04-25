@@ -53,35 +53,16 @@ namespace KanbanSimulation.Simulations
 			if (limit < 1)
 				throw new ArgumentException("Must be 1 or greater", nameof(limit));
 
-			var op1 = new Operation(1, identity.NextId());
-			op1.Constraint = new WipConstraint(op1, limit);
-			var op2 = new Operation(1, identity.NextId());
-			op2.Constraint = new WipConstraint(op2, limit);
-			var op3 = new Operation(1, identity.NextId());
-			op3.Constraint = new WipConstraint(op3, limit);
-			var op4 = new Operation(1, identity.NextId());
-			op4.Constraint = new WipConstraint(op4, limit);
-			var op5 = new Operation(1, identity.NextId());
-			op5.Constraint = new WipConstraint(op5, limit);
-			var op6 = new Operation(1, identity.NextId());
-			op6.Constraint = new WipConstraint(op6, limit);
-			var op7 = new Operation(bottleneck, identity.NextId());
-			op7.Constraint = new WipConstraint(op7, limit);
-			var op8 = new Operation(1, identity.NextId());
-			op8.Constraint = new WipConstraint(op8, limit);
-			var op9 = new Operation(1, identity.NextId());
-			op9.Constraint = new WipConstraint(op9, limit);
-
-			return new WorkProcess(new WorkProcessPullStrategy(), $"Kanban system (limit = {limit}, bottleneck={bottleneck})")
-				.AddOperation(op1)
-				.AddOperation(op2)
-				.AddOperation(op3)
-				.AddOperation(op4)
-				.AddOperation(op5)
-				.AddOperation(op6)
-				.AddOperation(op7)
-				.AddOperation(op8)
-				.AddOperation(op9);
+			return new KanbanWorkProcess(limit, $"Kanban system (limit = {limit}, bottleneck={bottleneck})")
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(bottleneck, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()));
 		}
 	}
 }

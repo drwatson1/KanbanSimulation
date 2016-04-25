@@ -63,6 +63,7 @@
     <Compile Include="Interfaces\IOperation.cs" />
     <Compile Include="Interfaces\IWorkProcessStrategy.cs" />
     <Compile Include="DefaultConstraint.cs" />
+    <Compile Include="KanbanWorkProcess.cs" />
     <Compile Include="NothingToDoException.cs" />
     <Compile Include="Operation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

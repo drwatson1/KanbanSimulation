@@ -119,6 +119,9 @@ namespace KanbanSimulation.DomainModel
 			}
 			operation.OutputQueue = outputQueue;
 
+			// Template method for addition operation configuration in derived classes
+			OnAfterAddOperation(operation);
+
 			return this;
 		}
 
@@ -179,5 +182,10 @@ namespace KanbanSimulation.DomainModel
 		}
 
 		#endregion Private methods
+
+
+		protected virtual void OnAfterAddOperation(Operation operation)
+		{
+		}
 	}
 }
