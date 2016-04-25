@@ -195,5 +195,69 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			wp.Done.Should().HaveCount(1);
 		}
+
+		[TestMethod]
+		public void KanbanSystemShouldNotExceedOneWorkItemPerOperation()
+		{
+			var op1 = new Operation(2);
+			op1.Constraint = new WipConstraint(op1, 1);
+			var op2 = new Operation(3);
+			op2.Constraint = new WipConstraint(op2, 1);
+			var op3 = new Operation(4);
+			op3.Constraint = new WipConstraint(op3, 1);
+
+			WorkProcess wp = new WorkProcess(new WorkProcessPullStrategy())
+				.AddOperation(op1)
+				.AddOperation(op2)
+				.AddOperation(op3);
+
+			wp.Push(new WorkItem());
+			wp.Push(new WorkItem());
+			wp.Push(new WorkItem());
+			wp.Push(new WorkItem());
+			wp.Push(new WorkItem());
+			wp.Push(new WorkItem());
+			wp.Push(new WorkItem());
+			wp.Push(new WorkItem());
+
+			while (wp.Done.Count < 3)
+			{
+				wp.Tick();
+
+				foreach (var op in wp.Operations)
+				{
+					op.WorkInProgress.Should().BeLessOrEqualTo(1);
+				}
+				wp.WorkInProgress.Should().BeLessOrEqualTo(3);
+			}
+
+			foreach (var op in wp.Operations)
+			{
+				op.WorkInProgress.Should().BeLessOrEqualTo(1);
+			}
+		}
+
+		[TestMethod]
+		public void OperationsInKanbanSystemShouldNotHaveZeroWipInMiddleOfProcess()
+		{
+			var op1 = new Operation();
+			op1.Constraint = new WipConstraint(op1, 1);
+			var op2 = new Operation();
+			op2.Constraint = new WipConstraint(op2, 1);
+
+			var wp = new WorkProcess(new WorkProcessPullStrategy())
+				.AddOperation(op1)
+				.AddOperation(op2);
+
+			wp.Push(new WorkItem());
+			wp.Push(new WorkItem());
+
+			wp.Tick();
+			wp.Tick();
+			wp.Tick();
+			wp.Tick();
+
+			op1.WorkInProgress.Should().Be(1);
+		}
 	}
 }
