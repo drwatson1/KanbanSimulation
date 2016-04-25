@@ -64,5 +64,32 @@ namespace KanbanSimulation.Simulations
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()));
 		}
+
+		static public WorkProcess CreateTocSystem(int bottleneck = 5, uint limit = 1)
+		{
+			if (bottleneck < 1)
+				throw new ArgumentException("Must be 1 or greater", nameof(bottleneck));
+			if (limit < 1)
+				throw new ArgumentException("Must be 1 or greater", nameof(limit));
+
+			var firstOp = new Operation(1, identity.NextId());
+			var bottleneckOp = new Operation(bottleneck, identity.NextId());
+
+			var wp = new KanbanWorkProcess(limit, $"TOC system (limit = {limit}, bottleneck={bottleneck})")
+				.AddOperation(firstOp)
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(bottleneckOp)
+				.AddOperation(new Operation(1, identity.NextId()))
+				.AddOperation(new Operation(1, identity.NextId()));
+
+			firstOp.Constraint = new WipConstraint(bottleneckOp, 3);
+			bottleneckOp.Constraint = new DefaultConstraint();
+
+			return wp;
+		}
 	}
 }

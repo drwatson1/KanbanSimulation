@@ -14,7 +14,9 @@ namespace KanbanSimulation.Console
 			{
 //				var workProcess = WorkProcessFactory.CreateNoConstraintsPushWorkProcess(5);
 //				var workProcess = WorkProcessFactory.CreateNoConstraintsPullWorkProcess(5);
-				var workProcess = WorkProcessFactory.CreateKanbanSystem();
+//				var workProcess = WorkProcessFactory.CreateKanbanSystem();
+				var workProcess = WorkProcessFactory.CreateTocSystem();
+
 				var sim = new Simulation(workProcess);
 
 				var form = new SimulationForm(workProcess.Name);
