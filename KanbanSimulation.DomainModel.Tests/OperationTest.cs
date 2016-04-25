@@ -325,5 +325,83 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			output.Count.Should().Be(2);
 		}
+
+		[TestMethod]
+		public void WipShouldUseInProgressQueue()
+		{
+			var op = new Operation();
+
+			op.Push(new WorkItem());
+
+			op.WorkInProgress.Should().Be(1);
+		}
+
+		[TestMethod]
+		public void WipShouldNotUseInputQueue()
+		{
+			var input = new WorkItemQueue();
+			var op = new Operation();
+			op.InputQueue = input;
+
+			input.Push(new WorkItem());
+
+			op.WorkInProgress.Should().Be(0);
+		}
+
+		[TestMethod]
+		public void WipShouldUseCurrentlyExecutedWorkItem()
+		{
+			var input = new WorkItemQueue();
+			var op = new Operation();
+			op.InputQueue = input;
+
+			input.Push(new WorkItem());
+			op.TakeNewWorkItems();
+
+			op.WorkInProgress.Should().Be(1);
+			input.Should().HaveCount(0);
+			op.InProgress.Should().HaveCount(0);
+			op.Done.Should().HaveCount(0);
+		}
+
+		[TestMethod]
+		public void WipShouldUseDone()
+		{
+			var input = new WorkItemQueue();
+			var op = new Operation();
+			op.InputQueue = input;
+
+			input.Push(new WorkItem());
+			op.TakeNewWorkItems();
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			op.WorkInProgress.Should().Be(1);
+			input.Should().HaveCount(0);
+			op.InProgress.Should().HaveCount(0);
+			op.Done.Should().HaveCount(1);
+		}
+
+		[TestMethod]
+		public void OperationShouldNotPullWorkItemIfConstraintViolated()
+		{
+			var input = new WorkItemQueue();
+			var op = new Operation();
+			op.InputQueue = input;
+
+			op.Constraint = new WipConstraint(op, 1);
+
+			input.Push(new WorkItem());
+			input.Push(new WorkItem());
+
+			op.TakeNewWorkItems();			// WIP == 1
+			op.DoWork();
+			op.MoveCompletedWorkItems();
+
+			op.TakeNewWorkItems();
+
+			op.WorkInProgress.Should().Be(1);
+			input.Count.Should().Be(1);
+		}
 	}
 }

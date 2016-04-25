@@ -85,6 +85,11 @@ namespace KanbanSimulation.DomainModel
 
 		#endregion IReadOnlyList<IWorkItem> implementation
 
+		public override string ToString()
+		{
+			return $"Count: {Count}";
+		}
+
 		#region ICompletedWorkItems implementation
 
 		bool ICompletedWorkItems.Contains(IWorkItem wi)

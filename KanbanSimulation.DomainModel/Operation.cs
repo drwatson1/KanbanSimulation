@@ -1,10 +1,7 @@
 ﻿using KanbanSimulation.Core;
-using KanbanSimulation.Core.Interfaces;
-using KanbanSimulation.DomainModel.Events;
 using KanbanSimulation.DomainModel.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
@@ -17,6 +14,8 @@ namespace KanbanSimulation.DomainModel
 		public readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
 		public readonly WorkItemQueue DoneQueue = new WorkItemQueue();
 		private int ActiveWorkItemsCount => CurrentWorkItem != null ? 1 : 0;
+
+		public IConstraint Constraint { get; set; } = new DefaultConstraint();
 
 		#endregion Private properties
 
@@ -64,6 +63,9 @@ namespace KanbanSimulation.DomainModel
 
 		public void TakeNewWorkItems()
 		{
+			if (!Constraint.CanTake(1))
+				return;
+
 			// Готовимся приняться за работу над очередным WI
 			if (CurrentWorkItem == null && !InputQueue.Empty)
 			{

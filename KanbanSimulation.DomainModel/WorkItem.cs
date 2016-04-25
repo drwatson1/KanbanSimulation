@@ -23,5 +23,10 @@ namespace KanbanSimulation.DomainModel
 		{
 			CurrentOperationProgress = 0;
 		}
+
+		public override string ToString()
+		{
+			return $"Id: {Id}, Lead time: {LeadTime}";
+		}
 	}
 }
