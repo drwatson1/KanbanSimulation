@@ -121,7 +121,7 @@ namespace KanbanSimulation.Console
 
 		public override bool Error(Exception ex)
 		{
-			System.Console.WriteLine(ex.ToString());
+			System.Console.WriteLine(ex);
 			return base.Error(ex);
 		}
 	}

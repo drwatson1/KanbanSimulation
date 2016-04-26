@@ -2,6 +2,7 @@
 using KanbanSimulation.DomainModel.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
@@ -14,6 +15,7 @@ namespace KanbanSimulation.DomainModel
 		public readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
 		public readonly WorkItemQueue DoneQueue = new WorkItemQueue();
 		private int ActiveWorkItemsCount => CurrentWorkItem != null ? 1 : 0;
+		private bool HaveCurrentWorkItem => ActiveWorkItemsCount > 0;
 
 		public IConstraint Constraint { get; set; } = new DefaultConstraint();
 
@@ -25,9 +27,12 @@ namespace KanbanSimulation.DomainModel
 		public IOutputQueue OutputQueue { get; set; }
 
 		public int Complexity { get; private set; }
-		public IReadOnlyList<IWorkItem> InProgress => InProgressQueue;
+		public IReadOnlyList<IWorkItem> InProgress => HaveCurrentWorkItem ? InProgressQueue.Concat(new List<IWorkItem> { WorkedOn }).ToList() : InProgressQueue.ToList();
+
+		public IWorkItem WorkedOn => CurrentWorkItem;
+
 		public IReadOnlyList<IWorkItem> Done => DoneQueue;
-		public int WorkInProgress => InProgressQueue.Count + DoneQueue.Count + ActiveWorkItemsCount;
+		public int WorkInProgress => InProgress.Count + DoneQueue.Count;
 
 		#endregion Public properties
 

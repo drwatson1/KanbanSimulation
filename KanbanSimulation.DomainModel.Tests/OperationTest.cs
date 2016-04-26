@@ -106,7 +106,8 @@ namespace KanbanSimulation.DomainModel.Tests
 			op.DoWork();
 
 			op.WorkInProgress.Should().Be(1);
-			op.InProgress.Count.Should().Be(0);
+			op.InProgress.Count.Should().Be(1);
+			op.WorkedOn.Should().NotBeNull();
 			op.Done.Count.Should().Be(0);
 			output.Count.Should().Be(0);
 		}
@@ -360,7 +361,8 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			op.WorkInProgress.Should().Be(1);
 			input.Should().HaveCount(0);
-			op.InProgress.Should().HaveCount(0);
+			op.InProgress.Should().HaveCount(1);
+			op.WorkedOn.Should().NotBeNull();
 			op.Done.Should().HaveCount(0);
 		}
 
@@ -424,6 +426,20 @@ namespace KanbanSimulation.DomainModel.Tests
 		}
 
 		[TestMethod]
+		public void InProgressShouldContainCurrentlyWorkedOnWorkItem()
+		{
+			var op = new Operation();
+
+			op.Push(new WorkItem());
+			op.Push(new WorkItem());
+
+			op.TakeNewWorkItems();
+
+			op.WorkedOn.Should().NotBeNull();
+			op.InProgress.Should().HaveCount(2);
+		}
+
+		[TestMethod]
 		public void ShouldTakeInWorkFromInProgressIfHaveInputQueue()
 		{
 			var input = new WorkItemQueue();
@@ -443,7 +459,10 @@ namespace KanbanSimulation.DomainModel.Tests
 
 			op.TakeNewWorkItems();
 
-			op.InProgress.Should().HaveCount(0);
+			op.InProgress.Should().HaveCount(1);
+			op.WorkInProgress.Should().Be(2);
+			op.WorkedOn.Should().NotBeNull();
+			input.Should().HaveCount(0);
 		}
 	}
 }
