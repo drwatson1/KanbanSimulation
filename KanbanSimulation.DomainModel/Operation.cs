@@ -15,7 +15,6 @@ namespace KanbanSimulation.DomainModel
 		public readonly WorkItemQueue InProgressQueue = new WorkItemQueue();
 		public readonly WorkItemQueue DoneQueue = new WorkItemQueue();
 		private int ActiveWorkItemsCount => CurrentWorkItem != null ? 1 : 0;
-		private bool HaveCurrentWorkItem => ActiveWorkItemsCount > 0;
 
 		public IConstraint Constraint { get; set; } = new DefaultConstraint();
 
@@ -27,9 +26,19 @@ namespace KanbanSimulation.DomainModel
 		public IOutputQueue OutputQueue { get; set; }
 
 		public int Complexity { get; private set; }
-		public IReadOnlyList<IWorkItem> InProgress => HaveCurrentWorkItem ? InProgressQueue.Concat(new List<IWorkItem> { WorkedOn }).ToList() : InProgressQueue.ToList();
+		public IReadOnlyList<IWorkItem> InProgress => HaveWorkedOnItem ? InProgressQueue.Concat(new List<IWorkItem> { WorkedOn }).ToList() : InProgressQueue.ToList();
 
-		public IWorkItem WorkedOn => CurrentWorkItem;
+		public IWorkItem WorkedOn
+		{
+			get
+			{
+				if (!HaveWorkedOnItem)
+					throw new ApplicationException("Operation have no currently executed work item");
+				return CurrentWorkItem;
+			}
+		}
+
+		public bool HaveWorkedOnItem => ActiveWorkItemsCount > 0;
 
 		public IReadOnlyList<IWorkItem> Done => DoneQueue;
 		public int WorkInProgress => InProgress.Count + DoneQueue.Count;
@@ -72,7 +81,7 @@ namespace KanbanSimulation.DomainModel
 				return;
 
 			// InputQueue and InProgressQueue may be the same
-			if (!InputQueue.Empty && !object.ReferenceEquals(InProgressQueue, InputQueue) )
+			if (!InputQueue.Empty && !object.ReferenceEquals(InProgressQueue, InputQueue))
 			{
 				InProgressQueue.Push(InputQueue.Pull());
 			}
