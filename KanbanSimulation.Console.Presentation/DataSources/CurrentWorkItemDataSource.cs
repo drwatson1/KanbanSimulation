@@ -27,6 +27,8 @@ namespace KanbanSimulation.Console.DataSources
 			string t = String.Format("[{0}", HaveWi() ? "." : " ");
 			if (HaveWi())
 				t += $" ({GetProgress()})]";
+			else
+				t += "    ]";
 
 			return t;
 		}

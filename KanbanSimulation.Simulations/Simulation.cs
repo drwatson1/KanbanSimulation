@@ -165,7 +165,8 @@ namespace KanbanSimulation.Simulations
 				|| Process.ElapsedTicks % 3 != 0))
 				return;
 
-			Process.Push(new WorkItem(identity.NextId()));
+			if( Process.InputQueue.Count == 0 )
+				Process.Push(new WorkItem(identity.NextId()));
 		}
 
 		private bool OutputQueueContainsWorkItem(WorkItem wi)
