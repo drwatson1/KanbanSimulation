@@ -22,8 +22,7 @@ namespace KanbanSimulation.Console.View
 					throw new ArgumentException("Position can't be null");
 				}
 
-				System.Console.CursorLeft = value.Left;
-				System.Console.CursorTop = value.Top;
+				System.Console.SetCursorPosition(value.Left, value.Top);
 			}
 		}
 

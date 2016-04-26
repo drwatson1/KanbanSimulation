@@ -3,10 +3,10 @@ using KanbanSimulation.Console.Controllers;
 using KanbanSimulation.Console.Forms;
 using KanbanSimulation.Console.View;
 using KanbanSimulation.Simulations;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
-using System;
 
 namespace KanbanSimulation.Console
 {
@@ -28,8 +28,6 @@ namespace KanbanSimulation.Console
 			Interval = 5;
 			Mode = SimulationMode.Auto;
 			Speed = 8;
-
-			ShowQueues = true;
 		}
 
 		[Required]
@@ -66,27 +64,53 @@ namespace KanbanSimulation.Console
 		[Description("Show InProgress and Done queues in operations separately")]
 		public bool ShowQueues { get; set; }
 
+		private void UpdateConsoleParams(SimulationForm form)
+		{
+			System.Console.CursorVisible = false;
+			if (System.Console.BufferWidth < form.Width)
+			{
+				System.Console.BufferWidth = form.Width;
+			}
+			if (System.Console.BufferHeight < form.Height * 2)
+			{
+				System.Console.BufferHeight = form.Height * 2;
+			}
+
+			if (System.Console.WindowWidth < form.Width)
+			{
+				System.Console.WindowWidth = form.Width;
+			}
+			if (System.Console.WindowHeight < form.Height * 2)
+			{
+				System.Console.WindowHeight = form.Height * 2;
+			}
+		}
+
 		public override int Start()
 		{
 			SimulationForm form = null;
 			try
 			{
 				var workProcess = WorkProcessFactory.CreateWorkProcess(Process, Bottleneck, Limit);
-
 				var sim = new Simulation(workProcess, Interval);
-
 				form = new SimulationForm(workProcess.Name, new ConsoleRenderer());
-
 				form.Position = new Position(System.Console.CursorLeft, System.Console.CursorTop);
-
 				var controller = new SimulationFormController(form, sim, ShowQueues);
 
-				System.Console.CursorVisible = false;
+				UpdateConsoleParams(form);
 
 				form.Render();
 
+				bool stop = false;
+
+				System.Console.CancelKeyPress += (object sender, ConsoleCancelEventArgs e) =>
+				{
+					e.Cancel = true;
+					stop = true;
+				};
+
 				int currentState = 1;
-				while (!sim.Tick())
+				while (!sim.Tick() && !stop)
 				{
 					controller.Tick();
 					form.Render();
@@ -114,7 +138,16 @@ namespace KanbanSimulation.Console
 				}
 
 				form.Render();
-				form.SetStatus("Simulation completed");
+
+				if (stop)
+				{
+					form.SetStatus("Simulation terminated by user");
+				}
+				else
+				{
+					form.SetStatus("Simulation completed");
+				}
+				System.Console.WriteLine();
 			}
 			finally
 			{
@@ -126,7 +159,7 @@ namespace KanbanSimulation.Console
 
 		public override bool Error(Exception ex)
 		{
-			System.Console.WriteLine(ex);
+			System.Console.WriteLine(ex.Message);
 			return base.Error(ex);
 		}
 	}
