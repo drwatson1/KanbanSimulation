@@ -24,7 +24,7 @@ namespace KanbanSimulation.Console.DataSources
 
 		public override string ToString()
 		{
-			string t = String.Format("[{0}]", HaveWi() ? "X" : " ");
+			string t = String.Format("[{0}]", HaveWi() ? "." : " ");
 			if (HaveWi())
 				t += $" ({GetProgress()})";
 

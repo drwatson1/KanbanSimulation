@@ -83,25 +83,34 @@ namespace KanbanSimulation.Console.Controllers
 			var panel = Form.AddOperation(op.Id, op.Complexity);
 			(panel.GetChildByName("wip") as TextBox).DataSource = DataSourceFactory.ObjectPropertyDataSource(() => op.WorkInProgress);
 
-			(panel.GetChildByName("cur") as TextBox).DataSource = new CurrentWorkItemDataSource(() => op.HaveWorkedOnItem, () => op.Complexity - op.WorkedOn.CurrentOperationProgress);
+
 
 			var queues = panel.GetChildByName("Queues") as StackPanel;
+
 			var inProgress = queues.GetChildByName("InProgress") as StackPanel;
+			var current = queues.GetChildByName("Current") as TextBox;
 			var done = queues.GetChildByName("Done") as StackPanel;
 
 			if (!SpanQueues)
 			{
+				(panel.GetChildByName("cur") as TextBox).DataSource = new CurrentWorkItemDataSource(() => op.HaveWorkedOnItem, () => op.Complexity - op.WorkedOn.CurrentOperationProgress);
 
 				(inProgress.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.HaveWorkedOnItem ? op.WorkInProgress - 1 : op.WorkInProgress);
 
+				current.Visible = false;
 				done.Visible = false;
-				Form.Arrange();
 			}
 			else
 			{
+				panel.GetChildByName("cur").Visible = false;
+
 				(inProgress.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.HaveWorkedOnItem ? op.InProgress.Count - 1 : op.InProgress.Count);
 				(done.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.Done.Count);
+
+				current.DataSource = new CurrentWorkItemDataSource(() => op.HaveWorkedOnItem, () => op.Complexity - op.WorkedOn.CurrentOperationProgress);
 			}
+
+			Form.Arrange();
 		}
 	}
 }

@@ -151,6 +151,7 @@ namespace KanbanSimulation.Console.Forms
 		{
 			return new StackPanel(StackPanelOrientation.Vertical, "Queues")
 				.AddChild(CreateWipPanel("InProgress"))
+				.AddChild(new TextBox(8, 1, null, "Current"))
 				.AddChild(CreateWipPanel("Done"));
 		}
 

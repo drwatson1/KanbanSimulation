@@ -81,11 +81,11 @@ namespace KanbanSimulation.Console
 
 			if (System.Console.WindowWidth < form.Width)
 			{
-				System.Console.WindowWidth = form.Width;
+				System.Console.WindowWidth = Math.Min(System.Console.LargestWindowWidth, form.Width);
 			}
 			if (System.Console.WindowHeight < form.Height * 2)
 			{
-				System.Console.WindowHeight = form.Height * 2;
+				System.Console.WindowHeight = Math.Min(System.Console.LargestWindowHeight, form.Height * 2);
 			}
 		}
 

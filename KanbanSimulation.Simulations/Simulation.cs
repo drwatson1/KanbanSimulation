@@ -161,8 +161,8 @@ namespace KanbanSimulation.Simulations
 
 		private void GenerateWorkItem()
 		{
-			if (Process.InputQueue.Count != 0
-				|| Process.ElapsedTicks % 3 != 0)
+			if (StepSize != 3 && (Process.InputQueue.Count != 0
+				|| Process.ElapsedTicks % 3 != 0))
 				return;
 
 			Process.Push(new WorkItem(identity.NextId()));
