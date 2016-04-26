@@ -67,6 +67,9 @@ namespace KanbanSimulation.Console
 		[Description("Doing simulation by minimum possible steps")]
 		public bool MinStep { get; set; }
 
+		[Description("Show simulation statistics")]
+		public bool Stat { get; set; }
+
 		private void UpdateConsoleParams(SimulationForm form)
 		{
 			System.Console.CursorVisible = false;
@@ -149,6 +152,9 @@ namespace KanbanSimulation.Console
 				else
 				{
 					form.SetStatus("Simulation completed");
+
+					if (Stat)
+						ShowStat(sim);
 				}
 				System.Console.WriteLine();
 			}
@@ -158,6 +164,16 @@ namespace KanbanSimulation.Console
 			}
 
 			return 0; // 0 for success.
+		}
+
+		private void ShowStat(Simulation sim)
+		{
+			System.Console.WriteLine();
+			System.Console.WriteLine();
+
+			System.Console.WriteLine(sim.Process.Name);
+			System.Console.WriteLine("{0,-12}{1, -4}{2,-4}", "Throughput", "WIP", "Lead time");
+			System.Console.WriteLine($"{sim.MeasuredThroughput, -12:F3}{sim.MeasuredWorkInProgress, -4}{sim.MeasuredLeadTime, -4}");
 		}
 
 		public override bool Error(Exception ex)
