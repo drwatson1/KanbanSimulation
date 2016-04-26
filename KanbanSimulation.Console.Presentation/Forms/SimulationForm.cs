@@ -138,16 +138,28 @@ namespace KanbanSimulation.Console.Forms
 				.AddChild(new Label($"({complexity})  ")) // complexity
 				.AddChild(new TextBox(4, 1, null, "wip"))            // WIP
 				.AddChild(new TextBox(8, 1, null, "cur"))            // current work item
-				.AddChild(new Label("["))
-				.AddChild(new TextBox(100, 1, null, "vis"))           // WIP visualization
-				.AddChild(new Label("]"))
-				;
+				.AddChild(CreateOperationQueues());
 
 			Operations.AddChild(p);
 
 			Root.Arrange();
 
 			return p;
+		}
+
+		private VisualBase CreateOperationQueues()
+		{
+			return new StackPanel(StackPanelOrientation.Vertical, "Queues")
+				.AddChild(CreateWipPanel("InProgress"))
+				.AddChild(CreateWipPanel("Done"));
+		}
+
+		private StackPanel CreateWipPanel(string name)
+		{
+			return new StackPanel(StackPanelOrientation.Horizontal, name)
+				.AddChild(new Label("["))
+				.AddChild(new TextBox(100, 1, null, "vis"))
+				.AddChild(new Label("]"));
 		}
 
 		private VisualBase CompletedPanel()

@@ -9,8 +9,8 @@ namespace KanbanSimulation.Console.View
 
 		public readonly StackPanelOrientation Orientation;
 
-		public StackPanel(StackPanelOrientation orientation)
-			: base(0, 0)
+		public StackPanel(StackPanelOrientation orientation, string name = "")
+			: base(0, 0, name)
 		{
 			Orientation = orientation;
 		}

@@ -11,8 +11,9 @@ namespace KanbanSimulation.Console.Controllers
 	{
 		private readonly SimulationForm Form;
 		private readonly Simulation Sim;
+		private readonly bool SpanQueues;
 
-		public SimulationFormController(SimulationForm form, Simulation sim)
+		public SimulationFormController(SimulationForm form, Simulation sim, bool spanQueues)
 		{
 			if (sim == null)
 				throw new ArgumentNullException(nameof(sim));
@@ -21,6 +22,7 @@ namespace KanbanSimulation.Console.Controllers
 
 			Form = form;
 			Sim = sim;
+			SpanQueues = spanQueues;
 
 			BindAll();
 		}
@@ -80,8 +82,26 @@ namespace KanbanSimulation.Console.Controllers
 		{
 			var panel = Form.AddOperation(op.Id, op.Complexity);
 			(panel.GetChildByName("wip") as TextBox).DataSource = DataSourceFactory.ObjectPropertyDataSource(() => op.WorkInProgress);
-			(panel.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.HaveWorkedOnItem ? op.WorkInProgress - 1 : op.WorkInProgress);
+
 			(panel.GetChildByName("cur") as TextBox).DataSource = new CurrentWorkItemDataSource(() => op.HaveWorkedOnItem, () => op.Complexity - op.WorkedOn.CurrentOperationProgress);
+
+			var queues = panel.GetChildByName("Queues") as StackPanel;
+			var inProgress = queues.GetChildByName("InProgress") as StackPanel;
+			var done = queues.GetChildByName("Done") as StackPanel;
+
+			if (!SpanQueues)
+			{
+
+				(inProgress.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.HaveWorkedOnItem ? op.WorkInProgress - 1 : op.WorkInProgress);
+
+				done.Visible = false;
+				Form.Arrange();
+			}
+			else
+			{
+				(inProgress.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.HaveWorkedOnItem ? op.InProgress.Count - 1 : op.InProgress.Count);
+				(done.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.Done.Count);
+			}
 		}
 	}
 }
