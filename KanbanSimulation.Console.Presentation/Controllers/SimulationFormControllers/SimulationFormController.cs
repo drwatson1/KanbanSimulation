@@ -1,13 +1,9 @@
-﻿using KanbanSimulation.Console.Forms;
+﻿using KanbanSimulation.Console.DataSources;
+using KanbanSimulation.Console.Forms;
+using KanbanSimulation.Console.View;
+using KanbanSimulation.DomainModel.Interfaces;
 using KanbanSimulation.Simulations;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KanbanSimulation.DomainModel.Interfaces;
-using KanbanSimulation.Console.View;
-using KanbanSimulation.Console.DataSources;
 
 namespace KanbanSimulation.Console.Controllers
 {
@@ -37,10 +33,12 @@ namespace KanbanSimulation.Console.Controllers
 					Form.Step1StackPanel.Visible = true;
 					Form.Arrange();
 					break;
+
 				case 2:
 					Form.Step2StackPanel.Visible = true;
 					Form.Arrange();
 					break;
+
 				case 3:
 					Form.Step3StackPanel.Visible = true;
 					Form.Arrange();
@@ -58,7 +56,7 @@ namespace KanbanSimulation.Console.Controllers
 			Form.CurrentStatus.DataSource = new SimulationStatusDataSource(() => Sim.IsFinished);
 			Form.CurrentStep.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.CurrentWorkFlowState);
 
-			Form.CompletedWorkItemsProgress.DataSource = new WorkInProgressViewDataSource(() => Sim.Process.CompletedWorkItems);
+			Form.CompletedWorkItemsProgress.DataSource = new WorkInProgressDataSource(() => Sim.Process.CompletedWorkItems);
 
 			Form.Step1LeadTime.DataSource = DataSourceFactory.ObjectPropertyDataSource(() => Sim.FirstCycleLeadTime);
 
@@ -82,7 +80,8 @@ namespace KanbanSimulation.Console.Controllers
 		{
 			var panel = Form.AddOperation(op.Id, op.Complexity);
 			(panel.GetChildByName("wip") as TextBox).DataSource = DataSourceFactory.ObjectPropertyDataSource(() => op.WorkInProgress);
-			(panel.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressViewDataSource(() => op.WorkInProgress);
+			(panel.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.WorkInProgress);
+			(panel.GetChildByName("cur") as TextBox).DataSource = new CurrentWorkItemDataSource(() => op.HaveWorkedOnItem, () => op.Complexity - op.WorkedOn.CurrentOperationProgress);
 		}
 	}
 }

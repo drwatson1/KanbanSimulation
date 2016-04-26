@@ -27,7 +27,7 @@ namespace KanbanSimulation.Console
 			Process = WorkProcessType.Push;
 			Interval = 5;
 			Mode = SimulationMode.Auto;
-			Speed = 9;
+			Speed = 8;
 		}
 
 		[Required]

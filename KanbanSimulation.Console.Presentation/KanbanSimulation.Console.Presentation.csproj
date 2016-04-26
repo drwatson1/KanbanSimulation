@@ -43,9 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\SimulationFormControllers\SimulationFormController.cs" />
+    <Compile Include="DataSources\CurrentWorkItemDataSource.cs" />
     <Compile Include="DataSources\ObjectPropertyDataSource.cs" />
     <Compile Include="DataSources\SimulationStatusDataSource.cs" />
-    <Compile Include="DataSources\WorkInProgressViewDataSource.cs" />
+    <Compile Include="DataSources\WorkInProgressDataSource.cs" />
     <Compile Include="Forms\SimulationForm.cs" />
     <Compile Include="Renderers\ConsoleRenderer.cs" />
     <Compile Include="Interfaces\IDataSource.cs" />

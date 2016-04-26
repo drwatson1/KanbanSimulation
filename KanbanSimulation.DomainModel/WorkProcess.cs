@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WorkProcess : Entity, IOperation
+	public class WorkProcess : Entity
 	{
 		#region private properties
 
@@ -28,36 +28,9 @@ namespace KanbanSimulation.DomainModel
 		public int ElapsedTicks { get; private set; }
 		public int CompletedWorkItems { get; private set; }
 		public readonly string Name;
-
-		#endregion Public properties
-
-		#region IOperation implementation
-
-		public int Complexity
-		{
-			get
-			{
-				return Operations.Sum(op => op.Complexity);
-			}
-		}
-
-		IReadOnlyList<IWorkItem> IOperation.InProgress
-		{
-			get
-			{
-				var inProgess = new List<IWorkItem>();
-				operations.ForEach(op => inProgess.AddRange(op.InProgress));
-				operations.ForEach(op => inProgess.AddRange(op.Done));
-
-				return inProgess;
-			}
-		}
-
-		IReadOnlyList<IWorkItem> IOperation.Done => outputQueue;
-
 		public int WorkInProgress { get; private set; }
 
-		#endregion IOperation implementation
+		#endregion Public properties
 
 		#region ctors
 
