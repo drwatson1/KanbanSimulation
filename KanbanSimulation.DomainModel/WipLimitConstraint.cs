@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace KanbanSimulation.DomainModel
 {
-	public class WipConstraint : IConstraint
+	public class WipLimitConstraint : IConstraint
 	{
 		private readonly IOperation Operation;
 		private readonly uint Limit;
 
-		public WipConstraint(IOperation operation, uint limit)
+		public WipLimitConstraint(IOperation operation, uint limit)
 		{
 			if (operation == null)
 				throw new ArgumentNullException(nameof(operation));

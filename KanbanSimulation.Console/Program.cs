@@ -1,8 +1,8 @@
-﻿using KanbanSimulation.Console.Controllers;
+﻿using BizArk.ConsoleApp;
+using KanbanSimulation.Console.Controllers;
 using KanbanSimulation.Console.Forms;
 using KanbanSimulation.Console.View;
 using KanbanSimulation.Simulations;
-using System.Threading;
 
 namespace KanbanSimulation.Console
 {
@@ -10,46 +10,7 @@ namespace KanbanSimulation.Console
 	{
 		private static void Main()
 		{
-			try
-			{
-//				var workProcess = WorkProcessFactory.CreateNoConstraintsPushWorkProcess(5);
-//				var workProcess = WorkProcessFactory.CreateNoConstraintsPullWorkProcess(5);
-//				var workProcess = WorkProcessFactory.CreateKanbanSystem();
-				var workProcess = WorkProcessFactory.CreateTocSystem();
-
-				var sim = new Simulation(workProcess);
-
-				var form = new SimulationForm(workProcess.Name);
-
-				form.Position = new Position(System.Console.CursorLeft, System.Console.CursorTop);
-
-				var r = new ConsoleRenderer();
-
-				var controller = new SimulationFormController(form, sim);
-
-				System.Console.CursorVisible = false;
-
-				form.Render(r);
-
-				while (!sim.Tick())
-				{
-					controller.Tick();
-					form.Render(r);
-					//Thread.Sleep(100);
-					System.Console.ReadLine();
-				}
-
-				form.Render(r);
-
-				System.Console.WriteLine();
-				System.Console.WriteLine();
-				System.Console.WriteLine("Simulation completed");
-				System.Console.ReadLine();
-			}
-			finally
-			{
-				System.Console.CursorVisible = true;
-			}
+			BaCon.Start<Application>();
 		}
 	}
 }

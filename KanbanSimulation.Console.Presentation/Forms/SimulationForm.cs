@@ -22,14 +22,17 @@ namespace KanbanSimulation.Console.Forms
 		public TextBox CompletedWorkItemsProgress;
 
 		public StackPanel Step1StackPanel = new StackPanel(StackPanelOrientation.Vertical);
-			public TextBox Step1LeadTime;
+		public TextBox Step1LeadTime;
 
 		public StackPanel Step2StackPanel = new StackPanel(StackPanelOrientation.Vertical);
-			public TextBox Step2WorkInProgress;
-			public TextBox Step2Throughput;
+		public TextBox Step2WorkInProgress;
+		public TextBox Step2Throughput;
 
 		public StackPanel Step3StackPanel = new StackPanel(StackPanelOrientation.Vertical);
-			public TextBox Step3LeadTime;
+		public TextBox Step3LeadTime;
+
+		private TextBox Status = new TextBox(50, 1);
+		private IRenderer Renderer;
 
 		public void Arrange()
 		{
@@ -53,14 +56,33 @@ namespace KanbanSimulation.Console.Forms
 			}
 		}
 
-		public SimulationForm(string caption)
+		public SimulationForm(string caption, IRenderer renderer)
 		{
+			if (renderer == null)
+				throw new ArgumentNullException(nameof(renderer));
+
+			Renderer = renderer;
 			Initialize(caption);
 		}
 
-		public void Render(IRenderer renderer)
+		public void SetStatus(string text)
 		{
-			Root.Render(renderer);
+			Status.DataSource = text;
+			Status.Render(Renderer);
+		}
+
+		public void ResetStatus()
+		{
+			Status.DataSource = null;
+			Status.Render(Renderer);
+		}
+
+		public int Width => Root.Width;
+		public int Height => Root.Height;
+
+		public void Render()
+		{
+			Root.Render(Renderer);
 		}
 
 		private void Initialize(string caption)
@@ -90,20 +112,21 @@ namespace KanbanSimulation.Console.Forms
 				.AddChild(new Blank())
 				.AddChild(Step3StackPanel)
 				.AddChild(new Blank())
+				.AddChild(Status)
 				;
 
 			Step1StackPanel.Visible = false;
-				Step1StackPanel.AddChild(new Label("Step 1:"));
-				Step1StackPanel.AddChild(LabelWithValue("  Lead time:  ", ref Step1LeadTime, 5));
+			Step1StackPanel.AddChild(new Label("Step 1:"));
+			Step1StackPanel.AddChild(LabelWithValue("  Lead time:  ", ref Step1LeadTime, 5));
 
 			Step2StackPanel.Visible = false;
-				Step2StackPanel.AddChild(new Label("Step 2:"));
-				Step2StackPanel.AddChild(LabelWithValue("  WIP:        ", ref Step2WorkInProgress, 5));
-				Step2StackPanel.AddChild(LabelWithValue("  Throughput: ", ref Step2Throughput, 5));
+			Step2StackPanel.AddChild(new Label("Step 2:"));
+			Step2StackPanel.AddChild(LabelWithValue("  WIP:        ", ref Step2WorkInProgress, 5));
+			Step2StackPanel.AddChild(LabelWithValue("  Throughput: ", ref Step2Throughput, 5));
 
 			Step3StackPanel.Visible = false;
-				Step3StackPanel.AddChild(new Label("Step 3:"));
-				Step3StackPanel.AddChild(LabelWithValue("  Lead time:  ", ref Step3LeadTime, 5));
+			Step3StackPanel.AddChild(new Label("Step 3:"));
+			Step3StackPanel.AddChild(LabelWithValue("  Lead time:  ", ref Step3LeadTime, 5));
 
 			Root.Arrange();
 		}
@@ -111,10 +134,10 @@ namespace KanbanSimulation.Console.Forms
 		public StackPanel AddOperation(int id, int complexity)
 		{
 			var p = new StackPanel(StackPanelOrientation.Horizontal);
-			p.AddChild(new Label($"{id, -3}"))               // Id
+			p.AddChild(new Label($"{id,-3}"))               // Id
 				.AddChild(new Label($"({complexity})  ")) // complexity
 				.AddChild(new TextBox(6, 1, null, "wip"))            // WIP
-				.AddChild(new Label("["))            
+				.AddChild(new Label("["))
 				.AddChild(new TextBox(50, 1, null, "vis"))           // WIP visualization
 				.AddChild(new Label("]"))
 				;

@@ -19,7 +19,7 @@ namespace KanbanSimulation.DomainModel
 
 		protected override void OnAfterAddOperation(Operation operation)
 		{
-			operation.Constraint = new WipConstraint(operation, Limit);
+			operation.Constraint = new WipLimitConstraint(operation, Limit);
 		}
 	}
 }

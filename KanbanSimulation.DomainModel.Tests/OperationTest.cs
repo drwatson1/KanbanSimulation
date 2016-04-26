@@ -389,7 +389,7 @@ namespace KanbanSimulation.DomainModel.Tests
 			var op = new Operation();
 			op.InputQueue = input;
 
-			op.Constraint = new WipConstraint(op, 1);
+			op.Constraint = new WipLimitConstraint(op, 1);
 
 			input.Push(new WorkItem());
 			input.Push(new WorkItem());

@@ -29,7 +29,7 @@ namespace KanbanSimulation.Simulations
 
 		#region Data after second workflow step
 
-		public decimal MeasuredThroughput { get; private set; }      // Average count work items for 1 MeasurementInterval
+		public decimal MeasuredThroughput { get; private set; }      // Average count of work items for 1 MeasurementInterval
 		public int MeasuredWorkInProgress { get; private set; }      // WIP after first work item completed
 
 		#endregion Data after second workflow step

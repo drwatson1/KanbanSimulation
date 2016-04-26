@@ -1,16 +1,49 @@
 ﻿using KanbanSimulation.DomainModel;
 using KanbanSimulation.DomainModel.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KanbanSimulation.Simulations
 {
+	public enum WorkProcessType
+	{
+		Push,
+		Pull,
+		Kanban,
+		Toc
+	}
+
 	static public class WorkProcessFactory
 	{
 		private static readonly IdGeneratorService identity = new IdGeneratorService();
+
+		static public WorkProcess CreateWorkProcess(WorkProcessType type, int bottleneck = 5, uint? limit = null)
+		{
+			switch (type)
+			{
+				case WorkProcessType.Push:
+					return CreateNoConstraintsPushWorkProcess(bottleneck);
+
+				case WorkProcessType.Pull:
+					return CreateNoConstraintsPullWorkProcess(bottleneck);
+
+				case WorkProcessType.Kanban:
+					{
+						if (limit.HasValue)
+							return CreateKanbanSystem(bottleneck, limit.Value);
+
+						return CreateKanbanSystem(bottleneck);
+					}
+				case WorkProcessType.Toc:
+					{
+						if (limit.HasValue)
+							return CreateTocSystem(bottleneck, limit.Value);
+
+						return CreateTocSystem(bottleneck);
+					}
+				default:
+					throw new ApplicationException("Unsupported process type");
+			}
+		}
 
 		static public WorkProcess CreateNoConstraintsPushWorkProcess(int bottleneck = 5)
 		{
@@ -65,7 +98,7 @@ namespace KanbanSimulation.Simulations
 				.AddOperation(new Operation(1, identity.NextId()));
 		}
 
-		static public WorkProcess CreateTocSystem(int bottleneck = 5, uint limit = 1)
+		static public WorkProcess CreateTocSystem(int bottleneck = 5, uint limit = 3)
 		{
 			if (bottleneck < 1)
 				throw new ArgumentException("Must be 1 or greater", nameof(bottleneck));
@@ -86,7 +119,7 @@ namespace KanbanSimulation.Simulations
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()));
 
-			firstOp.Constraint = new WipConstraint(bottleneckOp, 3);
+			firstOp.Constraint = new WipLimitConstraint(bottleneckOp, limit);
 
 			return wp;
 		}

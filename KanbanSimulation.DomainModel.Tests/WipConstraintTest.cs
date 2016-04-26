@@ -12,7 +12,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		{
 			var op = new Operation();
 
-			var c = new WipConstraint(op, 1);
+			var c = new WipLimitConstraint(op, 1);
 
 			c.CanTake(2).Should().Be(false);
 		}
@@ -22,7 +22,7 @@ namespace KanbanSimulation.DomainModel.Tests
 		{
 			var op = new Operation();
 
-			var c = new WipConstraint(op, 1);
+			var c = new WipLimitConstraint(op, 1);
 
 			c.CanTake(1).Should().Be(true);
 		}

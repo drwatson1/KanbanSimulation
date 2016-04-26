@@ -200,11 +200,11 @@ namespace KanbanSimulation.DomainModel.Tests
 		public void KanbanSystemShouldNotExceedOneWorkItemPerOperation()
 		{
 			var op1 = new Operation(2);
-			op1.Constraint = new WipConstraint(op1, 1);
+			op1.Constraint = new WipLimitConstraint(op1, 1);
 			var op2 = new Operation(3);
-			op2.Constraint = new WipConstraint(op2, 1);
+			op2.Constraint = new WipLimitConstraint(op2, 1);
 			var op3 = new Operation(4);
-			op3.Constraint = new WipConstraint(op3, 1);
+			op3.Constraint = new WipLimitConstraint(op3, 1);
 
 			WorkProcess wp = new WorkProcess(new WorkProcessPullStrategy())
 				.AddOperation(op1)
@@ -241,9 +241,9 @@ namespace KanbanSimulation.DomainModel.Tests
 		public void OperationsInKanbanSystemShouldNotHaveZeroWipInMiddleOfProcess()
 		{
 			var op1 = new Operation();
-			op1.Constraint = new WipConstraint(op1, 1);
+			op1.Constraint = new WipLimitConstraint(op1, 1);
 			var op2 = new Operation();
-			op2.Constraint = new WipConstraint(op2, 1);
+			op2.Constraint = new WipLimitConstraint(op2, 1);
 
 			var wp = new WorkProcess(new WorkProcessPullStrategy())
 				.AddOperation(op1)
