@@ -80,7 +80,7 @@ namespace KanbanSimulation.Console.Controllers
 		{
 			var panel = Form.AddOperation(op.Id, op.Complexity);
 			(panel.GetChildByName("wip") as TextBox).DataSource = DataSourceFactory.ObjectPropertyDataSource(() => op.WorkInProgress);
-			(panel.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.WorkInProgress);
+			(panel.GetChildByName("vis") as TextBox).DataSource = new WorkInProgressDataSource(() => op.HaveWorkedOnItem ? op.WorkInProgress - 1 : op.WorkInProgress);
 			(panel.GetChildByName("cur") as TextBox).DataSource = new CurrentWorkItemDataSource(() => op.HaveWorkedOnItem, () => op.Complexity - op.WorkedOn.CurrentOperationProgress);
 		}
 	}

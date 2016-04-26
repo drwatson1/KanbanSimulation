@@ -68,7 +68,7 @@ namespace KanbanSimulation.Console
 			{
 				var workProcess = WorkProcessFactory.CreateWorkProcess(Process, Bottleneck, Limit);
 
-				var sim = new Simulation(workProcess);
+				var sim = new Simulation(workProcess, Interval);
 
 				form = new SimulationForm(workProcess.Name, new ConsoleRenderer());
 
