@@ -15,6 +15,7 @@ namespace KanbanSimulation.Simulations
 		private int CurrentTicks => Process.ElapsedTicks - FirstCycleElapsedTicks;
 		private WorkItem EthalonWorkItem;
 		private StateMachine Workflow;
+		private readonly int StepSize;
 
 		#endregion StateMachine and it's state variables
 
@@ -59,7 +60,7 @@ namespace KanbanSimulation.Simulations
 
 		#endregion Public properties
 
-		public Simulation(WorkProcess process, int measurementInterval = 5)
+		public Simulation(WorkProcess process, int measurementInterval = 5, bool minStep = false)
 		{
 			if (process == null)
 				throw new System.ArgumentNullException(nameof(process));
@@ -68,6 +69,8 @@ namespace KanbanSimulation.Simulations
 
 			Process = process;
 			MeasurementInterval = measurementInterval;
+
+			StepSize = minStep ? 1 : 3;
 
 			ConfigureStateMachine();
 		}
@@ -94,7 +97,7 @@ namespace KanbanSimulation.Simulations
 				}
 
 				Process.Done.Clear();
-				Process.Tick(3);
+				Process.Tick(StepSize);
 
 				if (!OutputQueueContainsWorkItem(EthalonWorkItem))
 					return false;
@@ -109,10 +112,9 @@ namespace KanbanSimulation.Simulations
 				if (CurrentTicks >= FirstCycleElapsedTicks * MeasurementInterval)
 					return true;
 
-				if (Process.InputQueue.Count == 0)
-					Process.Push(new WorkItem(identity.NextId()));
+				GenerateWorkItem();
 
-				Process.Tick(3);
+				Process.Tick(StepSize);
 
 				if (CurrentTicks < FirstCycleElapsedTicks * MeasurementInterval)
 					return false;
@@ -130,10 +132,9 @@ namespace KanbanSimulation.Simulations
 				if (!Process.Done.Empty)
 					return true;
 
-				if (Process.InputQueue.Count == 0)
-					Process.Push(new WorkItem(identity.NextId()));
+				GenerateWorkItem();
 
-				Process.Tick(3);
+				Process.Tick(StepSize);
 
 				if (Process.Done.Empty)
 					return false;
@@ -148,8 +149,7 @@ namespace KanbanSimulation.Simulations
 
 			var s0 = new State(() =>
 			{
-				if (Process.InputQueue.Count == 0)
-					Process.Push(new WorkItem(identity.NextId()));
+				GenerateWorkItem();
 
 				Process.Tick();
 
@@ -157,6 +157,15 @@ namespace KanbanSimulation.Simulations
 			}, s1, 0);
 
 			Workflow = new StateMachine(s0, false);
+		}
+
+		private void GenerateWorkItem()
+		{
+			if (Process.InputQueue.Count != 0
+				|| Process.ElapsedTicks % 3 != 0)
+				return;
+
+			Process.Push(new WorkItem(identity.NextId()));
 		}
 
 		private bool OutputQueueContainsWorkItem(WorkItem wi)

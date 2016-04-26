@@ -64,6 +64,9 @@ namespace KanbanSimulation.Console
 		[Description("Show InProgress and Done queues in operations separately")]
 		public bool ShowQueues { get; set; }
 
+		[Description("Doing simulation by minimum possible steps")]
+		public bool MinStep { get; set; }
+
 		private void UpdateConsoleParams(SimulationForm form)
 		{
 			System.Console.CursorVisible = false;
@@ -92,7 +95,7 @@ namespace KanbanSimulation.Console
 			try
 			{
 				var workProcess = WorkProcessFactory.CreateWorkProcess(Process, Bottleneck, Limit);
-				var sim = new Simulation(workProcess, Interval);
+				var sim = new Simulation(workProcess, Interval, MinStep);
 				form = new SimulationForm(workProcess.Name, new ConsoleRenderer());
 				form.Position = new Position(System.Console.CursorLeft, System.Console.CursorTop);
 				var controller = new SimulationFormController(form, sim, ShowQueues);
