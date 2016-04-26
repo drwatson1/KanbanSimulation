@@ -106,7 +106,6 @@ namespace KanbanSimulation.Simulations
 				throw new ArgumentException("Must be 1 or greater", nameof(limit));
 
 			var firstOp = new Operation(1, identity.NextId());
-			var bottleneckOp = new Operation(bottleneck, identity.NextId());
 
 			var wp = new WorkProcess(new WorkProcessPullStrategy(), $"TOC system (limit = {limit}, bottleneck={bottleneck})")
 				.AddOperation(firstOp)
@@ -115,11 +114,11 @@ namespace KanbanSimulation.Simulations
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
-				.AddOperation(bottleneckOp)
+				.AddOperation(new Operation(bottleneck, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()))
 				.AddOperation(new Operation(1, identity.NextId()));
 
-			firstOp.Constraint = new WipLimitConstraint(bottleneckOp, limit);
+			firstOp.Constraint = new WipLimitConstraint(wp.Operations[6], limit);
 
 			return wp;
 		}
